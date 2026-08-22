@@ -19,7 +19,7 @@ import pandas as pd
 from datetime import date, timedelta
 
 from src.config import (
-    DISTRICTS, STATE, SKUS, SEASONALITY, BASE_INCIDENCE,
+    DISTRICTS, STATE, SKUS, SEASONALITY, BASE_INCIDENCE,NFHS_TREATMENT_RATE,
     PROFILE_SUPPLY, LEAD_TIME_MIN_DAYS, LEAD_TIME_MAX_DAYS,
     INDENT_CYCLE_DAYS, HISTORY_DAYS, RANDOM_SEED,
 )
@@ -118,7 +118,9 @@ def build_ledger(facilities, disease, start, days):
                 wk = max([w for w in weeks if w <= d], default=weeks[0])
                 cases = dw.get((f.district, wk, disease_link), 0)
                 daily_cases = (cases * share) / 7.0
-                units = daily_cases * per_course
+                # NFHS-5: not every case receives the medicine
+                rate = NFHS_TREATMENT_RATE.get(code, 1.0)
+                units = daily_cases * per_course * rate
                 units *= rng.uniform(0.85, 1.15)          # noise
                 demand.append(max(0.0, units))
 

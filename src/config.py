@@ -50,15 +50,31 @@ SEASONALITY = {
     "chronic":    [1.0] * 12,   # chronic demand is flat by design
 }
 
-# baseline weekly cases per 100,000 population, pre-seasonality
+# ---------------------------------------------------------------- incidence
+# Diarrhoeal baseline is calibrated against NFHS-5 (2019-21) measured
+# prevalence for Telangana: 5.46% of under-5 children reported diarrhoea in
+# the 2 weeks preceding the survey. Converted to weekly cases per 100,000
+# total population, assuming under-5s are ~9% of population (Census 2011).
+#   0.0546 prevalence / 2 weeks x 0.09 x 100,000 = ~246 weekly under-5 cases
+#   x 0.7109 (NFHS: share taken to a health facility) = ~175 presenting
+#   Adults roughly double the presenting caseload -> ~350
+# Source: data/raw/NFHS_5_Factsheets_Data.xls
 BASE_INCIDENCE = {
-    "diarrhoeal": 42.0,
-    "malaria":     6.0,
-    "cholera":     2.5,
-    "fever":     110.0,
-    "chronic":    85.0,
+    "diarrhoeal": 350.0,
+    "malaria":      6.0,
+    "cholera":      2.5,
+    "fever":      110.0,
+    "chronic":     85.0,
 }
 
+# NFHS-5 Telangana treatment rates — what fraction of presenting cases
+# actually receive each medicine. Previously assumed 100%.
+NFHS_TREATMENT_RATE = {
+    "ORS001": 0.6178,   # received oral rehydration salts
+    "ZNC001": 0.3931,   # received zinc
+}
+
+NFHS_FACILITY_SEEKING = 0.7109   # share of cases reaching a health provider
 # district character -> how well supplied it is
 PROFILE_SUPPLY = {
     "volatile":     {"order_factor": 1.00, "delay_prob": 0.22},

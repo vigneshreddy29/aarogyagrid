@@ -1,0 +1,50 @@
+[
+  {
+    "scenario":"Dengue outbreak",
+    "note":"Vector-borne surge. Fever management and rehydration spike; platelet monitoring drives admissions. Modelled on IDSP post-monsoon dengue patterns in south India.",
+    "onset_days":7,
+    "footfall_mult":2.4,
+    "baseline_at_risk":76,
+    "surge_at_risk":93,
+    "newly_at_risk":16,
+    "fail_before_onset":36,
+    "median_days_lost":17.0,
+    "worst_facility":"PHC Yadadri Bhuvanagiri 8"
+  },
+  {
+    "scenario":"Flood displacement",
+    "note":"Water contamination and displacement camps. Diarrhoeal and cholera caseload rises sharply within days of inundation.",
+    "onset_days":3,
+    "footfall_mult":2.9,
+    "baseline_at_risk":76,
+    "surge_at_risk":107,
+    "newly_at_risk":30,
+    "fail_before_onset":25,
+    "median_days_lost":24.35,
+    "worst_facility":"PHC Yadadri Bhuvanagiri 8"
+  },
+  {
+    "scenario":"Heatwave",
+    "note":"Heat stress and dehydration. Chronic patients decompensate; ORS demand rises alongside cardiac and renal presentations.",
+    "onset_days":2,
+    "footfall_mult":1.7,
+    "baseline_at_risk":76,
+    "surge_at_risk":92,
+    "newly_at_risk":15,
+    "fail_before_onset":13,
+    "median_days_lost":13.3,
+    "worst_facility":"PHC Yadadri Bhuvanagiri 8"
+  },
+  {
+    "scenario":"Malaria surge",
+    "note":"Post-monsoon transmission peak. Antimalarial demand rises faster than any other class and substitutes poorly.",
+    "onset_days":5,
+    "footfall_mult":1.9,
+    "baseline_at_risk":76,
+    "surge_at_risk":96,
+    "newly_at_risk":19,
+    "fail_before_onset":34,
+    "median_days_lost":22.0,
+    "worst_facility":"PHC Yadadri Bhuvanagiri 8"
+  }
+]

@@ -6,23 +6,28 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+import style
 
 from src.gemini.nl_query import run as nl_run, summarise
 
 st.set_page_config(page_title="AarogyaGrid", page_icon="🏥", layout="wide")
+style.apply(st)
 
 OUT = "data/processed"
+LEAD_TIME_NOTE = "typical resupply lead time is 7–21 days"
 
 
 @st.cache_data
-def load(v="4"):
+def load(v="6"):
     import json, os
 
-    briefs, fed = {}, []
+    briefs, fed, scen = {}, [], []
     if os.path.exists(f"{OUT}/briefs.json"):
         briefs = json.load(open(f"{OUT}/briefs.json", encoding="utf-8"))
     if os.path.exists(f"{OUT}/federation.json"):
         fed = json.load(open(f"{OUT}/federation.json", encoding="utf-8"))
+    if os.path.exists(f"{OUT}/scenarios.json"):
+        scen = json.load(open(f"{OUT}/scenarios.json", encoding="utf-8"))
 
     alerts    = pd.read_parquet(f"{OUT}/alerts.parquet")
     transfers = pd.read_parquet(f"{OUT}/transfers.parquet")
@@ -30,17 +35,19 @@ def load(v="4"):
     ledger    = pd.read_parquet(f"{OUT}/stock_ledger.parquet")
     status    = pd.read_parquet(f"{OUT}/facility_status.parquet")
     resil     = pd.read_parquet(f"{OUT}/resilience.parquet")
+    foot      = pd.read_parquet(f"{OUT}/footfall.parquet")
+    link      = pd.read_parquet(f"{OUT}/footfall_link.parquet")
 
-    # Parquet can restore these as object dtype on a fresh container,
-    # which breaks the .dt accessor. Coerce explicitly.
     disease["week_start"] = pd.to_datetime(disease["week_start"], errors="coerce")
     ledger["date"]        = pd.to_datetime(ledger["date"], errors="coerce")
+    foot["date"]          = pd.to_datetime(foot["date"], errors="coerce")
 
-    return alerts, transfers, disease, ledger, briefs, fed, status, resil
+    return (alerts, transfers, disease, ledger, briefs, fed,
+            status, resil, foot, link, scen)
 
 
-alerts, transfers, disease, ledger, briefs, fed, status, resil = load("4")
-
+(alerts, transfers, disease, ledger, briefs, fed,
+ status, resil, foot, link, scen) = load("6")
 TIER_COLOR = {"STOCKOUT": "#8B0000", "CRITICAL": "#DC2626",
               "WARNING": "#F59E0B", "WATCH": "#FCD34D", "OK": "#10B981"}
 
@@ -66,6 +73,9 @@ c4.metric("Preventable stock-outs", int((alerts.tier == "CRITICAL").sum()),
 c5.metric("Courses protected", f"{int(transfers.courses_covered.sum()):,}")
 
 st.divider()
+w = resil.iloc[0]
+style.ribbon(st, w.facility_name, int(w.score), w.band,
+             w.primary_risk, w.days_to_next_stockout, w.district)
 
 # ---------------------------------------------------------------- NL query
 with st.expander("🔍 **Ask a question** — natural language search across all facilities",
@@ -117,9 +127,10 @@ with st.expander("🔍 **Ask a question** — natural language search across all
 
 st.divider()
 
-tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs(
-    ["Alert Map", "Preventable Stock-outs", "Redistribution Plan",
-     "AI Briefings", "Federated Learning", "Resilience Score", "Why It Works"])
+tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9 = st.tabs(
+    ["Alert Map", "Patient Footfall", "Emergency Mode", "Preventable Stock-outs",
+     "Redistribution Plan", "AI Briefings", "Federated Learning",
+     "PHC Resilience Index", "Why It Works"])
 
 # ---------------------------------------------------------------- map
 with tab1:
@@ -134,15 +145,175 @@ with tab1:
         hover_name="facility_name",
         hover_data={"district": True, "sku_name": True,
                     "days_to_stockout": True, "latitude": False, "longitude": False},
-        map_style="carto-positron")
+        map_style="carto-darkmatter")
     fig.update_layout(margin=dict(l=0, r=0, t=0, b=0))
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(style.dark(fig), use_container_width=True)
 
     st.dataframe(alerts.tier.value_counts().rename("facility-SKU pairs"),
                  use_container_width=True)
+# ---------------------------------------------------------------- footfall
+with tab2:
+    st.subheader("Patient footfall → demand signal → medicine need")
+    st.caption("Footfall is the operational link between disease in the "
+               "community and stock leaving a shelf. A case only consumes "
+               "medicine once the patient walks in.")
+
+    latest = foot.date.max()
+    today = foot[foot.date == latest]
+
+    f1, f2, f3, f4, f5 = st.columns(5)
+    f1.metric("OPD visits today", f"{int(today.opd_visits.sum()):,}")
+    f2.metric("IPD admissions", int(today.ipd_admissions.sum()))
+    f3.metric("Emergency cases", int(today.emergency_cases.sum()))
+    f4.metric("Referrals", int(today.referrals.sum()))
+    f5.metric("Mean wait", f"{today.avg_wait_min.mean():.0f} min")
+
+    st.divider()
+
+    # ---- the chain, made explicit ---------------------------------
+    rising = today.nlargest(1, "opd_trend_pct").iloc[0]
+    fac_alerts = alerts[(alerts.facility_id == rising.facility_id) &
+                        (alerts.tier.isin(["CRITICAL", "STOCKOUT"]))]
+
+    if len(fac_alerts):
+        a = fac_alerts.nsmallest(1, "days_to_stockout").iloc[0]
+        chain = (f"**{rising.facility_name}** — OPD up "
+                 f"**{rising.opd_trend_pct:+.1f}%** week on week "
+                 f"({int(rising.opd_visits)} visits today) → "
+                 f"**{a.sku_name}** burning {a.daily_burn}/day → "
+                 f"stock-out in **{a.days_to_stockout:.1f} days**")
+    else:
+        chain = (f"**{rising.facility_name}** — OPD up "
+                 f"**{rising.opd_trend_pct:+.1f}%** week on week "
+                 f"({int(rising.opd_visits)} visits today). No medicine "
+                 f"at risk yet; the forecaster is tracking it.")
+    st.warning(chain)
+
+    st.divider()
+
+    # ---- footfall over time ---------------------------------------
+    pick = st.selectbox("Facility", sorted(foot.facility_name.unique()),
+                        key="foot_pick")
+    h = foot[foot.facility_name == pick].tail(120)
+
+    ff = go.Figure()
+    ff.add_bar(x=h.date, y=h.opd_visits, name="OPD visits",
+               marker_color="rgba(91,141,239,0.40)")
+    ff.add_scatter(x=h.date, y=h.opd_7d, name="7-day average",
+                   line=dict(color="#5B8DEF", width=2.5))
+    ff.add_scatter(x=h.date, y=h.emergency_cases, name="Emergency",
+                   line=dict(color="#F43F5E", width=1.8))
+    ff.update_layout(height=330, yaxis_title="Patients")
+    st.plotly_chart(style.dark(ff), use_container_width=True)
+
+    # ---- the measured relationship --------------------------------
+    st.markdown("#### Does footfall actually move medicine?")
+
+    r1, r2 = st.columns([1, 2])
+    r1.metric("Median correlation", f"{link.footfall_demand_r.median():.3f}",
+              help="Weekly OPD volume vs units issued, per facility")
+    r1.metric("Facilities above 0.5",
+              f"{int((link.footfall_demand_r > 0.5).sum())} of {len(link)}")
+
+    with r2:
+        hist = go.Figure()
+        hist.add_histogram(x=link.footfall_demand_r, nbinsx=16,
+                           marker_color="rgba(52,211,153,0.65)")
+        hist.update_layout(height=210, xaxis_title="Correlation (r)",
+                           yaxis_title="Facilities")
+        st.plotly_chart(style.dark(hist), use_container_width=True)
+
+    st.info(
+        "**Measured weekly, and only on days stock was available.** A facility "
+        "that has run out issues nothing no matter how many patients arrive — "
+        "including those days would mask the relationship rather than measure "
+        "it. Daily figures are also too noisy in both series; weekly "
+        "aggregation is the honest window.")
+
+    with st.expander("Footfall by facility, today"):
+        st.dataframe(
+            today[["facility_name", "facility_type", "district", "opd_visits",
+                   "opd_7d", "opd_trend_pct", "ipd_admissions",
+                   "emergency_cases", "referrals", "avg_wait_min"]]
+            .sort_values("opd_visits", ascending=False).round(1),
+            use_container_width=True, hide_index=True, height=340)
+# ---------------------------------------------------------------- emergency
+with tab3:
+    st.subheader("Emergency mode — what happens when demand surges")
+    st.caption("The challenge asks for early warning during health emergencies. "
+               "A steady-state forecast cannot answer that. Each scenario "
+               "applies disease-specific demand multipliers and re-runs the "
+               "same reorder arithmetic — nothing is retrained, which is "
+               "exactly what would happen in production.")
+
+    if not scen:
+        st.warning("Run `python src/alerts/emergency.py`.")
+    else:
+        sdf = pd.DataFrame(scen)
+        pick = st.radio("Scenario", sdf.scenario.tolist(),
+                        horizontal=True, key="scen_pick")
+        s = sdf[sdf.scenario == pick].iloc[0]
+
+        st.info(s.note)
+
+        e1, e2, e3, e4 = st.columns(4)
+        e1.metric("Facilities at risk", int(s.surge_at_risk),
+                  delta=f"+{int(s.surge_at_risk - s.baseline_at_risk)} vs normal",
+                  delta_color="inverse")
+        e2.metric("Newly critical", int(s.newly_at_risk),
+                  help="Facilities that were coping and now are not")
+        e3.metric("Warning time lost", f"{s.median_days_lost:.1f} d",
+                  help="Median reduction in days-to-stock-out across affected medicines")
+        e4.metric("Fail inside onset window", int(s.fail_before_onset),
+                  help=f"Deplete within the {int(s.onset_days)}-day onset period")
+
+        st.divider()
+
+        fname = f"{OUT}/surge_{pick.split()[0].lower()}.parquet"
+        if os.path.exists(fname):
+            sd = pd.read_parquet(fname)
+            aff = sd[sd.surge_mult > 1].copy()
+
+            cmp = pd.DataFrame({
+                "state": ["Normal", pick],
+                "STOCKOUT": [int((sd.tier == "STOCKOUT").sum()),
+                             int((sd.surge_tier == "STOCKOUT").sum())],
+                "CRITICAL": [int((sd.tier == "CRITICAL").sum()),
+                             int((sd.surge_tier == "CRITICAL").sum())],
+                "WARNING":  [int((sd.tier == "WARNING").sum()),
+                             int((sd.surge_tier == "WARNING").sum())],
+                "OK":       [int((sd.tier == "OK").sum()),
+                             int((sd.surge_tier == "OK").sum())],
+            })
+
+            cf = go.Figure()
+            for tname, col in [("OK", "#34D399"), ("WARNING", "#FBBF24"),
+                               ("CRITICAL", "#F43F5E"), ("STOCKOUT", "#8B0000")]:
+                cf.add_bar(x=cmp.state, y=cmp[tname], name=tname, marker_color=col)
+            cf.update_layout(barmode="stack", height=330,
+                             yaxis_title="Facility-medicine pairs")
+            st.plotly_chart(style.dark(cf), use_container_width=True)
+
+            st.markdown("#### Medicines that fail first")
+            first = aff.nsmallest(10, "surge_days")[
+                ["facility_name", "district", "sku_name", "current_stock",
+                 "daily_burn", "surge_burn", "days_to_stockout",
+                 "surge_days", "days_lost"]].round(1)
+            first.columns = ["Facility", "District", "Medicine", "Stock",
+                             "Normal burn", "Surge burn", "Normal days",
+                             "Surge days", "Days lost"]
+            st.dataframe(first, use_container_width=True, hide_index=True)
+
+            st.error(
+                f"**Under {pick.lower()}, {int(s.fail_before_onset)} facility-medicine "
+                f"pairs deplete inside the {int(s.onset_days)}-day onset window** — "
+                f"faster than a district indent can be raised and delivered "
+                f"({LEAD_TIME_NOTE}). Pre-positioning has to happen before the "
+                f"surge is visible in case counts, which is what the forecast "
+                f"and redistribution layers exist to enable.")
 
 # ---------------------------------------------------------------- preventable
-with tab2:
+with tab4:
     st.subheader("Stock still available — depletion predicted before resupply")
     crit = alerts[alerts.tier == "CRITICAL"].sort_values("days_to_stockout")
 
@@ -174,7 +345,7 @@ with tab2:
         f.add_hline(y=0, line_color="#DC2626")
         f.update_layout(height=300, margin=dict(l=0, r=0, t=10, b=0),
                         yaxis_title="Units")
-        st.plotly_chart(f, use_container_width=True)
+        st.plotly_chart(style.dark(f), use_container_width=True)
 
         st.info(f"**{row.facility_name}** has **{int(row.current_stock)} units** of "
                 f"{row.sku_name}, burning **{row.daily_burn}/day** — depletion in "
@@ -182,12 +353,18 @@ with tab2:
                 f"**{int(row.reorder_point)} units**.")
 
 # ---------------------------------------------------------------- transfers
-with tab3:
+with tab5:
     st.subheader("Recommended transfers — surplus to shortage")
     st.caption(f"{len(transfers)} orders · "
                f"{int(transfers.cross_district.sum())} cross-district · "
                f"{int(transfers.quantity.sum()):,} units · "
                f"mean {transfers.road_km.mean():.0f} km")
+
+    st.info("**These are recommendations, not instructions.** The optimiser "
+            "proposes; a district officer approves, modifies or rejects. "
+            "Nothing moves without human authorisation — stock transfers "
+            "carry clinical and audit consequences that a solver cannot weigh.")
+               
 
     for r in transfers.head(12).itertuples():
         with st.container(border=True):
@@ -200,9 +377,25 @@ with tab3:
                 f"{'already at zero' if r.to_days_to_stockout == 0 else f'{r.to_days_to_stockout} days to stock-out'}")
             b.metric("Distance", f"{r.road_km} km", f"~{r.drive_min} min")
             b.caption(f"{int(r.courses_covered)} treatment courses")
+            ac1, ac2, ac3 = a.columns(3)
+            key = f"{r.from_facility}_{r.to_facility}_{r.sku_code}"
+            state = st.session_state.get(f"tr_{key}")
+
+            if state:
+                a.success(f"**{state}** — logged for district approval")
+            else:
+                if ac1.button("Approve", key=f"ap_{key}", use_container_width=True):
+                    st.session_state[f"tr_{key}"] = "Approved"
+                    st.rerun()
+                if ac2.button("Modify", key=f"md_{key}", use_container_width=True):
+                    st.session_state[f"tr_{key}"] = "Sent back for revision"
+                    st.rerun()
+                if ac3.button("Reject", key=f"rj_{key}", use_container_width=True):
+                    st.session_state[f"tr_{key}"] = "Rejected"
+                    st.rerun()
 
 # ---------------------------------------------------------------- AI briefs
-with tab4:
+with tab6:
     st.subheader("Gemini-generated field briefings")
     st.caption("Each alert is converted into an operational briefing an officer "
                "can act on, and translated for the PHC pharmacist. Gemini "
@@ -226,13 +419,17 @@ with tab4:
             st.info(b["english"])
         with c:
             st.markdown("**తెలుగు — PHC pharmacist**")
-            st.success(b["telugu"] or "—")
+            st.markdown(
+                f"<div class='telugu' style='background:#15803D0F;"
+                f"border:1px solid #15803D;border-left:3px solid #15803D;"
+                f"border-radius:2px;padding:14px 16px;font-size:0.95rem'>"
+                f"{b['telugu'] or '—'}</div>", unsafe_allow_html=True)
 
         st.caption(f"{len(briefs)} briefings cached across "
                    f"{len({v['facility'] for v in briefs.values()})} facilities")
 
 # ---------------------------------------------------------------- federation
-with tab5:
+with tab7:
     st.subheader("Federated learning across nodes")
     st.caption("Each node trains on its own data. Only model coefficients and "
                "feature statistics are exchanged — no inventory records, no "
@@ -261,7 +458,7 @@ with tab5:
         f.update_layout(barmode="group", height=380,
                         yaxis_title="Forecast error (MAPE %)",
                         margin=dict(l=0, r=0, t=10, b=0))
-        st.plotly_chart(f, use_container_width=True)
+        st.plotly_chart(style.dark(f), use_container_width=True)
 
         st.dataframe(fdf, use_container_width=True, hide_index=True)
 
@@ -285,12 +482,14 @@ pooling the underlying data.
 """)
 
 # ---------------------------------------------------------------- resilience
-with tab6:
-    st.subheader("PHC Resilience Score")
-    st.caption("One score per facility, combining medicine availability (40%), "
-               "stock-out urgency (20%), staff availability (20%) and bed "
-               "headroom (20%). Ranked so a district officer knows where to "
-               "intervene first, rather than reading four separate tables.")
+    st.subheader("Operational PHC Resilience Index")
+    st.caption("A prototype policy index, not a validated instrument. It "
+               "combines medicine availability (40%), stock-out urgency (20%), "
+               "staff availability (20%) and bed headroom (20%) into one "
+               "ranked figure, so a district officer can see where to "
+               "intervene first rather than reading four separate tables. "
+               "The weights are a starting proposal and would need "
+               "calibration against outcome data before operational use.")
 
     b1, b2, b3, b4 = st.columns(4)
     for col, name in zip([b1, b2, b3, b4],
@@ -305,17 +504,9 @@ with tab6:
 
     s1, s2 = st.columns([1, 2])
     with s1:
-        st.markdown(
-            f"<div style='text-align:center;padding:18px;border-radius:10px;"
-            f"background:{BAND_COLOR[w.band]}22;"
-            f"border:2px solid {BAND_COLOR[w.band]}'>"
-            f"<div style='font-size:52px;font-weight:700;"
-            f"color:{BAND_COLOR[w.band]}'>{int(w.score)}</div>"
-            f"<div style='font-size:13px;opacity:.7'>out of 100</div>"
-            f"<div style='font-size:17px;font-weight:600;margin-top:6px;"
-            f"color:{BAND_COLOR[w.band]}'>{w.band}</div></div>",
-            unsafe_allow_html=True)
-
+           s1, s2 = st.columns([1, 2])
+    with s1:
+        style.score_card(st, int(w.score), w.band)
     with s2:
         factors = pd.DataFrame({
             "Factor": ["Medicine availability", "Stock-out urgency",
@@ -331,7 +522,7 @@ with tab6:
                    textposition="outside")
         fg.update_layout(height=210, xaxis_range=[0, 115],
                          margin=dict(l=0, r=0, t=0, b=0), showlegend=False)
-        st.plotly_chart(fg, use_container_width=True)
+        st.plotly_chart(style.dark(fg), use_container_width=True)
 
     st.error(
         f"**Primary risk:** {w.primary_risk} — "
@@ -356,7 +547,7 @@ with tab6:
                       xaxis_title="Resilience score (0–100)",
                       yaxis=dict(autorange="reversed"),
                       margin=dict(l=0, r=0, t=10, b=0))
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(style.dark(fig), use_container_width=True)
 
     with st.expander("Score breakdown, all facilities"):
         st.dataframe(
@@ -382,8 +573,94 @@ with tab6:
         "facility's supply stress. No public API exposes either live. The scoring "
         "logic operates identically on real HMIS attendance data.")
 
+# ---------------------------------------------------------------- resilience
+with tab8:
+    st.subheader("Operational PHC Resilience Index")
+    st.caption("A prototype policy index, not a validated instrument. It "
+               "combines medicine availability (40%), stock-out urgency (20%), "
+               "staff availability (20%) and bed headroom (20%) into one ranked "
+               "figure, so a district officer can see where to intervene first "
+               "rather than reading four separate tables. The weights are a "
+               "starting proposal and would need calibration against outcome "
+               "data before operational use.")
+
+    b1, b2, b3, b4 = st.columns(4)
+    for col, name in zip([b1, b2, b3, b4],
+                         ["HIGH RISK", "AT RISK", "STABLE", "RESILIENT"]):
+        col.metric(name.title(), int((resil.band == name).sum()))
+
+    st.divider()
+
+    w = resil.iloc[0]
+    st.markdown(f"### Most vulnerable: {w.facility_name}")
+
+    s1, s2 = st.columns([1, 2])
+    with s1:
+        style.score_card(st, int(w.score), w.band)
+
+    with s2:
+        factors = pd.DataFrame({
+            "Factor": ["Medicine availability", "Stock-out urgency",
+                       "Staff availability", "Bed headroom"],
+            "Score": [w.supply_pct, w.urgency_pct, w.staffing_pct, w.capacity_pct],
+        })
+        fg = go.Figure()
+        fg.add_bar(x=factors.Score, y=factors.Factor, orientation="h",
+                   marker_color=["#F43F5E" if v < 50 else
+                                 "#FBBF24" if v < 75 else "#34D399"
+                                 for v in factors.Score],
+                   text=[f"{v:.0f}%" for v in factors.Score],
+                   textposition="outside")
+        fg.update_layout(height=215, xaxis_range=[0, 118], showlegend=False)
+        st.plotly_chart(style.dark(fg), use_container_width=True)
+
+    st.error(
+        f"**Primary risk:** {w.primary_risk} — "
+        f"{'already at zero' if w.days_to_next_stockout == 0 else f'{w.days_to_next_stockout:.1f} days to stock-out'}  \n"
+        f"**Weakest factor:** {w.weakest_factor}  \n"
+        f"**Supply status:** {int(w.skus_stocked_out)} of {int(w.skus_total)} "
+        f"medicines already at zero, {int(w.skus_critical)} more running out")
+
+    st.divider()
+    st.markdown("#### All facilities, ranked by vulnerability")
+
+    rf = go.Figure()
+    for bnd in ["HIGH RISK", "AT RISK", "STABLE", "RESILIENT"]:
+        sub = resil[resil.band == bnd]
+        if len(sub):
+            rf.add_bar(x=sub.score, y=sub.facility_name, orientation="h",
+                       name=bnd, marker_color=style.BAND_COLOR[bnd],
+                       hovertemplate="<b>%{y}</b><br>index %{x}<extra></extra>")
+    rf.update_layout(height=760, barmode="stack",
+                     xaxis_title="Resilience index (0–100)",
+                     yaxis=dict(autorange="reversed"))
+    st.plotly_chart(style.dark(rf), use_container_width=True)
+
+    with st.expander("Index breakdown, all facilities"):
+        st.dataframe(
+            resil[["facility_name", "facility_type", "district", "score", "band",
+                   "supply_pct", "urgency_pct", "staffing_pct", "capacity_pct",
+                   "skus_stocked_out", "primary_risk"]],
+            use_container_width=True, hide_index=True, height=380)
+
+    with st.expander("Bed and staff detail"):
+        st.dataframe(
+            status[["facility_name", "facility_type", "district",
+                    "beds_occupied", "beds_sanctioned", "occupancy_pct",
+                    "doctors_present", "doctors_sanctioned",
+                    "nurses_present", "nurses_sanctioned",
+                    "pharmacists_present", "pharmacists_sanctioned",
+                    "staff_present_pct"]],
+            use_container_width=True, hide_index=True, height=340)
+
+    st.warning(
+        "**Data note.** Bed occupancy and staff attendance are generated against "
+        "Indian Public Health Standards norms — 6 beds and 2 doctors per PHC, "
+        "30 beds and 6 doctors per CHC — with vacancy correlated to each "
+        "facility's supply stress. No public API exposes either live. The index "
+        "computes identically on real HMIS attendance data.")
 # ---------------------------------------------------------------- evidence
-with tab7:
+with tab9:
     st.subheader("How this data was constructed")
     st.caption("Live PHC inventory APIs are not publicly available in India. "
                "Rather than generating random numbers, consumption is computed "
@@ -411,7 +688,7 @@ with tab7:
                   yaxis="y2", line=dict(color="#2563EB", width=2))
     f.update_layout(height=340, yaxis2=dict(overlaying="y", side="right"),
                     margin=dict(l=0, r=0, t=10, b=0))
-    st.plotly_chart(f, use_container_width=True)
+    st.plotly_chart(style.dark(f), use_container_width=True)
 
     r = comp.iloc[:, 0].corr(comp.iloc[:, 1])
     m1, m2 = st.columns([1, 3])

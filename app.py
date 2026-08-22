@@ -11,16 +11,24 @@ OUT = "data/processed"
 @st.cache_data
 def load():
     import json, os
+
     briefs, fed = {}, []
     if os.path.exists(f"{OUT}/briefs.json"):
         briefs = json.load(open(f"{OUT}/briefs.json", encoding="utf-8"))
     if os.path.exists(f"{OUT}/federation.json"):
         fed = json.load(open(f"{OUT}/federation.json", encoding="utf-8"))
-    return (pd.read_parquet(f"{OUT}/alerts.parquet"),
-            pd.read_parquet(f"{OUT}/transfers.parquet"),
-            pd.read_parquet(f"{OUT}/disease_weekly.parquet"),
-            pd.read_parquet(f"{OUT}/stock_ledger.parquet"),
-            briefs, fed)
+
+    alerts    = pd.read_parquet(f"{OUT}/alerts.parquet")
+    transfers = pd.read_parquet(f"{OUT}/transfers.parquet")
+    disease   = pd.read_parquet(f"{OUT}/disease_weekly.parquet")
+    ledger    = pd.read_parquet(f"{OUT}/stock_ledger.parquet")
+
+    # Parquet can restore these as object dtype on a fresh container,
+    # which breaks the .dt accessor. Coerce explicitly.
+    disease["week_start"] = pd.to_datetime(disease["week_start"], errors="coerce")
+    ledger["date"]        = pd.to_datetime(ledger["date"], errors="coerce")
+
+    return alerts, transfers, disease, ledger, briefs, fed
 
 
 alerts, transfers, disease, ledger, briefs, fed = load()

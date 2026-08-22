@@ -8,8 +8,9 @@ st.set_page_config(page_title="AarogyaGrid", page_icon="🏥", layout="wide")
 
 OUT = "data/processed"
 
+
 @st.cache_data
-def load(v="2"):
+def load(v="3"):
     import json, os
 
     briefs, fed = {}, []
@@ -22,16 +23,17 @@ def load(v="2"):
     transfers = pd.read_parquet(f"{OUT}/transfers.parquet")
     disease   = pd.read_parquet(f"{OUT}/disease_weekly.parquet")
     ledger    = pd.read_parquet(f"{OUT}/stock_ledger.parquet")
+    status    = pd.read_parquet(f"{OUT}/facility_status.parquet")
 
     # Parquet can restore these as object dtype on a fresh container,
     # which breaks the .dt accessor. Coerce explicitly.
     disease["week_start"] = pd.to_datetime(disease["week_start"], errors="coerce")
     ledger["date"]        = pd.to_datetime(ledger["date"], errors="coerce")
 
-    return alerts, transfers, disease, ledger, briefs, fed
+    return alerts, transfers, disease, ledger, briefs, fed, status
 
 
-alerts, transfers, disease, ledger, briefs, fed = load("2")
+alerts, transfers, disease, ledger, briefs, fed, status = load("3")
 
 TIER_COLOR = {"STOCKOUT": "#8B0000", "CRITICAL": "#DC2626",
               "WARNING": "#F59E0B", "WATCH": "#FCD34D", "OK": "#10B981"}
@@ -52,9 +54,9 @@ c5.metric("Courses protected", f"{int(transfers.courses_covered.sum()):,}")
 
 st.divider()
 
-tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(
+tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs(
     ["Alert Map", "Preventable Stock-outs", "Redistribution Plan",
-     "AI Briefings", "Federated Learning", "Why It Works"])
+     "AI Briefings", "Federated Learning", "Facility Capacity", "Why It Works"])
 
 # ---------------------------------------------------------------- map
 with tab1:
@@ -210,8 +212,77 @@ The gain scales inversely with local data volume — data-rich states are unaffe
 data-poor states benefit most. Seasonality is shared structure across states, so it
 can be learned collectively without pooling the underlying data.
 """)
-# ---------------------------------------------------------------- evidence
+
+# ---------------------------------------------------------------- capacity
 with tab6:
+    st.subheader("Bed availability and staff attendance")
+    st.caption("The problem statement asks for visibility into beds and personnel "
+               "alongside medicine stock. Both arrive through the same ingestion "
+               "schema as inventory — this view demonstrates that interface.")
+
+    k1, k2, k3, k4 = st.columns(4)
+    k1.metric("Mean bed occupancy", f"{status.occupancy_pct.mean():.0f}%")
+    k2.metric("Above 85% occupancy", int((status.occupancy_pct > 85).sum()),
+              help="Facilities near or at bed capacity")
+    k3.metric("Mean staff present", f"{status.staff_present_pct.mean():.0f}%")
+    k4.metric("Below 70% staffed", int((status.staff_present_pct < 70).sum()),
+              help="Facilities operating well below sanctioned strength")
+
+    st.divider()
+
+    both = status[(status.staff_present_pct < 80) & (status.supply_stressed_skus >= 3)]
+    if len(both):
+        st.error(
+            f"**{len(both)} facilities are simultaneously understaffed and "
+            f"supply-stressed.** These are the sites where a stock-out does the "
+            f"most damage — fewer staff to manage rationing, referral, or "
+            f"emergency indents. District planning should prioritise them.")
+        st.dataframe(
+            both[["facility_name", "district", "occupancy_pct",
+                  "staff_present_pct", "supply_stressed_skus"]]
+            .sort_values("supply_stressed_skus", ascending=False),
+            use_container_width=True, hide_index=True)
+
+    st.divider()
+
+    f = go.Figure()
+    f.add_scatter(
+        x=status.staff_present_pct, y=status.occupancy_pct,
+        mode="markers", text=status.facility_name,
+        marker=dict(size=status.supply_stressed_skus * 4 + 8,
+                    color=status.supply_stressed_skus,
+                    colorscale="Reds", showscale=True,
+                    colorbar=dict(title="Stressed<br>SKUs")),
+        hovertemplate="<b>%{text}</b><br>staff %{x}%<br>beds %{y}%<extra></extra>")
+    f.add_vline(x=70, line_dash="dash", line_color="#F59E0B",
+                annotation_text="70% staffed")
+    f.add_hline(y=85, line_dash="dash", line_color="#F59E0B",
+                annotation_text="85% occupancy")
+    f.update_layout(height=420, xaxis_title="Staff present (% of sanctioned)",
+                    yaxis_title="Bed occupancy (%)",
+                    margin=dict(l=0, r=0, t=10, b=0))
+    st.plotly_chart(f, use_container_width=True)
+
+    with st.expander("Full facility table"):
+        st.dataframe(
+            status[["facility_name", "facility_type", "district",
+                    "beds_occupied", "beds_sanctioned", "occupancy_pct",
+                    "doctors_present", "doctors_sanctioned",
+                    "nurses_present", "nurses_sanctioned",
+                    "staff_present_pct"]],
+            use_container_width=True, hide_index=True, height=340)
+
+    st.warning(
+        "**Data note.** No public API exposes live bed occupancy or staff "
+        "attendance for Indian PHCs. These figures are generated against Indian "
+        "Public Health Standards (IPHS) norms — 6 beds and 2 doctors per PHC, "
+        "30 beds and 6 doctors per CHC — with occupancy and vacancy correlated "
+        "to each facility's supply stress. The purpose is to demonstrate the "
+        "ingestion interface these fields arrive through, not to report real "
+        "occupancy.")
+
+# ---------------------------------------------------------------- evidence
+with tab7:
     st.subheader("How this data was constructed")
     st.caption("Live PHC inventory APIs are not publicly available in India. "
                "Rather than generating random numbers, consumption is computed "

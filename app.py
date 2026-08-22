@@ -10,12 +10,20 @@ OUT = "data/processed"
 
 @st.cache_data
 def load():
+    import json, os
+    briefs, fed = {}, []
+    if os.path.exists(f"{OUT}/briefs.json"):
+        briefs = json.load(open(f"{OUT}/briefs.json", encoding="utf-8"))
+    if os.path.exists(f"{OUT}/federation.json"):
+        fed = json.load(open(f"{OUT}/federation.json", encoding="utf-8"))
     return (pd.read_parquet(f"{OUT}/alerts.parquet"),
             pd.read_parquet(f"{OUT}/transfers.parquet"),
             pd.read_parquet(f"{OUT}/disease_weekly.parquet"),
-            pd.read_parquet(f"{OUT}/stock_ledger.parquet"))
+            pd.read_parquet(f"{OUT}/stock_ledger.parquet"),
+            briefs, fed)
 
-alerts, transfers, disease, ledger = load()
+
+alerts, transfers, disease, ledger, briefs, fed = load()
 
 TIER_COLOR = {"STOCKOUT": "#8B0000", "CRITICAL": "#DC2626",
               "WARNING": "#F59E0B", "WATCH": "#FCD34D", "OK": "#10B981"}
@@ -36,8 +44,9 @@ c5.metric("Courses protected", f"{int(transfers.courses_covered.sum()):,}")
 
 st.divider()
 
-tab1, tab2, tab3, tab4 = st.tabs(
-    ["Alert Map", "Preventable Stock-outs", "Redistribution Plan", "Why It Works"])
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(
+    ["Alert Map", "Preventable Stock-outs", "Redistribution Plan",
+     "AI Briefings", "Federated Learning", "Why It Works"])
 
 # ---------------------------------------------------------------- map
 with tab1:
@@ -115,34 +124,71 @@ with tab3:
             b.metric("Distance", f"{r.road_km} km", f"~{r.drive_min} min")
             b.caption(f"{int(r.courses_covered)} treatment courses")
 
-# ---------------------------------------------------------------- evidence
+# ---------------------------------------------------------------- AI briefs
 with tab4:
-    st.subheader("Consumption is derived from real disease surveillance")
-    d = st.selectbox("District", sorted(disease.district.unique()))
+    st.subheader("Gemini-generated field briefings")
+    st.caption("Each alert is converted into a causal explanation an officer "
+               "can act on, and translated for the PHC pharmacist. Generated "
+               "with Gemini and cached — no live API call on page load.")
 
-    ors = ledger[(ledger.district == d) & (ledger.sku_code == "ORS001")].copy()
-    ors["month"] = pd.to_datetime(ors.date).dt.to_period("M").astype(str)
-    om = ors.groupby("month").issues.sum()
+    if not briefs:
+        st.warning("No briefs cached. Run `python src/gemini/briefs.py`.")
+    else:
+        items = sorted(briefs.items(), key=lambda kv: kv[1]["days_to_stockout"])
+        labels = [f"{v['facility']} — {v['sku']} ({v['days_to_stockout']:.0f}d)"
+                  for _, v in items]
+        idx = st.selectbox("Select alert", range(len(labels)),
+                           format_func=lambda i: labels[i])
+        b = items[idx][1]
 
-    dia = disease[(disease.district == d) & (disease.disease == "diarrhoeal")].copy()
-    dia["month"] = pd.to_datetime(dia.week_start).dt.to_period("M").astype(str)
-    dm = dia.groupby("month").case_count.sum()
+        a, c = st.columns(2)
+        with a:
+            st.markdown("**English — district health officer**")
+            st.info(b["english"])
+        with c:
+            st.markdown("**తెలుగు — PHC pharmacist**")
+            st.success(b["telugu"] or "—")
 
-    comp = pd.DataFrame({"Diarrhoeal cases": dm, "ORS issued": om}).dropna()
+        st.caption(f"{len(briefs)} briefings cached across "
+                   f"{len({v['facility'] for v in briefs.values()})} facilities")
 
-    f = go.Figure()
-    f.add_scatter(x=comp.index, y=comp["Diarrhoeal cases"], name="Diarrhoeal cases",
-                  line=dict(color="#DC2626", width=2))
-    f.add_scatter(x=comp.index, y=comp["ORS issued"], name="ORS issued",
-                  yaxis="y2", line=dict(color="#2563EB", width=2))
-    f.update_layout(height=340, yaxis2=dict(overlaying="y", side="right"),
-                    margin=dict(l=0, r=0, t=10, b=0))
-    st.plotly_chart(f, use_container_width=True)
+# ---------------------------------------------------------------- federation
+with tab5:
+    st.subheader("Federated learning across states")
+    st.caption("Each state trains on its own data. Only model coefficients and "
+               "feature statistics are exchanged — no inventory records, no "
+               "patient data, no facility rows cross a state boundary.")
 
-    st.metric("Correlation", f"{comp.iloc[:,0].corr(comp.iloc[:,1]):.3f}")
-    st.caption(
-        "Live PHC inventory APIs are not publicly available. Facility structure follows "
-        "Indian PHC norms (1 PHC per ~30,000 population); disease seasonality is modelled "
-        "on published IDSP patterns; SKUs are drawn from the NLEM. Consumption is derived "
-        "from clinical treatment courses, never invented. The ingestion API accepts "
-        "DVDMS-shaped records, so a state connects its live feed without changing anything.")
+    if not fed:
+        st.warning("No federation results. Run `python src/federated/fedavg.py`.")
+    else:
+        fdf = pd.DataFrame(fed)
+
+        f = go.Figure()
+        f.add_bar(x=fdf.node, y=fdf.local_mape, name="Trained alone",
+                  marker_color="#DC2626")
+        f.add_bar(x=fdf.node, y=fdf.federated_mape, name="With federation",
+                  marker_color="#10B981")
+        f.update_layout(barmode="group", height=380,
+                        yaxis_title="Forecast error (MAPE %)",
+                        margin=dict(l=0, r=0, t=10, b=0))
+        st.plotly_chart(f, use_container_width=True)
+
+        st.dataframe(fdf, use_container_width=True, hide_index=True)
+
+        best = fdf.loc[fdf["improvement_%"].idxmax()]
+        st.success(
+            f"**{best['node']}** has only {int(best['train_rows']):,} training rows "
+            f"— too little to learn monsoon seasonality alone. Federation reduces "
+            f"its forecast error from {best['local_mape']}% to "
+            f"{best['federated_mape']}% ({best['improvement_%']}% better), "
+            f"without a single data row leaving the state.")
+
+        st.markdown("""
+**What crosses a state boundary:** 12 model coefficients, 12 feature statistics.
+**What never leaves the state:** inventory records, patient counts, facility data.
+
+The gain scales inversely with local data volume — data-rich states are unaffected,
+data-poor states benefit most. Seasonality is shared structure across states, so it
+can be learned collectively without pooling the underlying data.
+""")

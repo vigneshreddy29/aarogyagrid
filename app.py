@@ -81,7 +81,16 @@ with st.expander("🔍 **Ask a question** — natural language search across all
             if expr:
                 st.code(expr, language="text")
         else:
-            st.success(f"{len(res)} matching facility-medicine pairs")
+            from src.gemini.nl_query import summarise
+            with st.spinner("Summarising…"):
+                try:
+                    brief = summarise(q, res)
+                except Exception:
+                    brief = ""
+
+            if brief:
+                st.info(brief)
+            st.caption(f"{len(res)} matching facility-medicine pairs")
             st.dataframe(
                 res[["facility_name", "facility_type", "district", "sku_name",
                      "current_stock", "days_to_stockout", "tier",

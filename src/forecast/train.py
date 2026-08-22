@@ -56,13 +56,22 @@ def build_features(ledger, disease):
                               "case_count": "disease_cases"})
     df = df.merge(dis[["district", "week_start", "sku_disease", "disease_cases"]],
                   on=["district", "week_start", "sku_disease"], how="left")
-    df["disease_cases"] = df["disease_cases"].fillna(0)
+    # carry the last known surveillance reading forward — real IDSP data
+    # also arrives weekly and lags, so this mirrors operational reality
+    df = df.sort_values(["facility_id", "sku_code", "date"])
+    df["disease_cases"] = (df.groupby(["facility_id", "sku_code"])["disease_cases"]
+                             .ffill().fillna(0))
 
     df = df.sort_values(key + ["date"]).reset_index(drop=True)
     df["disease_lag_7"] = df.groupby(key)["disease_cases"].shift(7)
-    df["disease_ma_28"] = df.groupby(key)["disease_cases"].transform(
-        lambda s: s.shift(1).rolling(28).mean())
-    df["disease_trend"] = df["disease_cases"] / (df["disease_ma_28"] + 1)
+
+    # District-level baseline: IDSP reports by district, so the trend
+    # multiplier is a district property, not a facility one.
+    dist_base = (df.groupby(["district", "sku_disease"])["disease_cases"]
+                   .transform("median"))
+    df["disease_ma_28"] = dist_base
+    df["disease_trend"] = (df["disease_cases"] / dist_base.replace(0, np.nan)).fillna(1.0)
+    df["disease_trend"] = df["disease_trend"].clip(0.3, 4.0)
 
     # seasonality
     doy = df["date"].dt.dayofyear

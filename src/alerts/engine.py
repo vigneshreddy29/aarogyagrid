@@ -23,6 +23,16 @@ LEAD_TIME = 14          # planning assumption: mean lead time
 def main():
     feats = pd.read_parquet(f"{OUT}/features.parquet")
     facs  = pd.read_parquet(f"{OUT}/facilities.parquet")
+    dis = pd.read_parquet(f"{OUT}/disease_weekly.parquet")
+    dis["week_start"] = pd.to_datetime(dis["week_start"])
+
+    # current district activity vs that district's own median for the disease
+    recent = dis[dis.week_start >= dis.week_start.max() - pd.Timedelta(days=28)]
+    cur = recent.groupby(["district", "disease"])["case_count"].mean()
+    med = dis.groupby(["district", "disease"])["case_count"].median()
+    TREND = (cur / med.replace(0, 1)).clip(0.3, 4.0).to_dict()
+
+    SKU_DISEASE = {c: d for c, _, _, d, _, _ in SKUS}
     with open("models/forecast_models.pkl", "rb") as f:
         models = pickle.load(f)
 
@@ -67,7 +77,8 @@ def main():
                 "reorder_point":    int(reorder[i]),
                 "safety_stock":     int(safety),
                 "tier":             tier,
-                "disease_trend":    round(float(r.disease_trend), 2),
+                "disease_trend":    round(TREND.get(
+                                        (r.district, SKU_DISEASE[code]), 1.0), 2),
                 "as_of":            r.date,
             })
 

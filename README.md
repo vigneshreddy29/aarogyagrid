@@ -154,6 +154,11 @@ OR-Tools min-cost flow generates **executable transfer orders**: move 282 units 
 </div>
 
 > **The top three improvements are all outbreak-driven medicines.** That is not coincidence — it is the disease surveillance feature carrying genuine predictive signal. Chronic medicines like Metformin, whose demand is flat, improve least. Exactly as theory predicts.
+> ⚠️ **Measured on synthetic data.** These figures come from data generated with a
+> known structure, so real-world performance on live PHC records would be lower.
+> What the comparison establishes is that disease surveillance features carry
+> predictive signal beyond consumption history alone — a relationship that holds
+> independently of the data source.
 
 <br>
 
@@ -270,9 +275,13 @@ We state this plainly rather than obscure it.
 
 <div align="center">
 
-### Consumption is never invented — it is *computed* from epidemiology.
+### Consumption is computed from epidemiology, not invented.
 
-**ORS consumption correlates with district diarrhoeal cases at r = 0.960**
+**ORS consumption tracks district diarrhoeal cases at r = 0.960** — which is
+expected, since consumption was *derived* from cases at 6 sachets each. The
+correlation validates that the generator applies clinical norms consistently
+across 18 months and three districts. It is not evidence that the data matches
+real PHC records, and we do not claim it is.
 
 *Visible live on the "Why It Works" tab*
 

@@ -88,7 +88,7 @@ with tab2:
 
     st.dataframe(
         show[["facility_name", "district", "sku_name", "current_stock",
-              "daily_burn", "days_to_stockout", "reorder_point", "disease_trend"]],
+              "daily_burn", "days_to_stockout", "reorder_point"]],
         use_container_width=True, height=340, hide_index=True)
 
     if len(show):
@@ -112,8 +112,8 @@ with tab2:
 
         st.info(f"**{row.facility_name}** has **{int(row.current_stock)} units** of "
                 f"{row.sku_name}, burning **{row.daily_burn}/day** — depletion in "
-                f"**{row.days_to_stockout} days**. District disease activity is at "
-                f"**{row.disease_trend}x** its 28-day norm.")
+                f"**{row.days_to_stockout} days**, against a reorder point of "
+                f"**{int(row.reorder_point)} units**.")
 
 # ---------------------------------------------------------------- transfers
 with tab3:
@@ -167,6 +167,16 @@ with tab5:
                "feature statistics are exchanged — no inventory records, no "
                "patient data, no facility rows cross a state boundary.")
 
+    st.info(
+        "**How these nodes are constructed.** The three nodes are simulated by "
+        "partitioning our districts and giving each a deliberately different "
+        "amount of training history — 18, 9 and 3 months. They carry state names "
+        "to make the scenario legible, but the underlying facilities are in "
+        "Telangana. What is being demonstrated is the *federation mechanism*, "
+        "which is identical regardless of how nodes are partitioned: each node "
+        "trains locally, shares only weights, and receives a blended model "
+        "weighted by its own data volume.")
+
     if not fed:
         st.warning("No federation results. Run `python src/federated/fedavg.py`.")
     else:
@@ -202,10 +212,12 @@ can be learned collectively without pooling the underlying data.
 """)
 # ---------------------------------------------------------------- evidence
 with tab6:
-    st.subheader("Consumption is derived from real disease surveillance")
-    st.caption("Stock movements are not invented. They are computed from "
-               "district disease incidence through standard clinical "
-               "treatment courses.")
+    st.subheader("How this data was constructed")
+    st.caption("Live PHC inventory APIs are not publicly available in India. "
+               "Rather than generating random numbers, consumption is computed "
+               "from district disease incidence through published clinical "
+               "treatment courses. Here is exactly how, and what that does "
+               "and does not prove.")
 
     d = st.selectbox("District", sorted(disease.district.unique()))
 
@@ -228,19 +240,53 @@ with tab6:
                     margin=dict(l=0, r=0, t=10, b=0))
     st.plotly_chart(f, use_container_width=True)
 
-    st.metric("Correlation", f"{comp.iloc[:, 0].corr(comp.iloc[:, 1]):.3f}")
+    r = comp.iloc[:, 0].corr(comp.iloc[:, 1])
+    m1, m2 = st.columns([1, 3])
+    m1.metric("Correlation", f"{r:.3f}")
+    m2.warning(
+        "**This correlation is expected, not discovered.** ORS consumption was "
+        "*derived* from diarrhoeal case counts at 6 sachets per case, so the two "
+        "series are related by construction. The chart confirms the generator "
+        "applies clinical norms consistently across 18 months and three districts "
+        "— it is a validation of the construction, not evidence that the data "
+        "matches real PHC records.")
 
     st.markdown("""
-**What is real:** district structure and PHC/CHC counts follow Indian norms
-(1 PHC per ~30,000 population); the SKU list is drawn from the National List of
-Essential Medicines; disease seasonality is modelled on published IDSP patterns.
+#### What is real
 
-**What is derived:** stock levels, receipts, and issues are computed from disease
-incidence via standard clinical treatment courses — ORS at 6 sachets per
-diarrhoeal case, artemether-lumefantrine at 1 course per malaria case, and so on.
+- **District structure** — Nalgonda, Yadadri Bhuvanagiri and Suryapet are real
+  Telangana districts. Facility counts follow Indian norms: 1 PHC per ~30,000
+  rural population, 1 CHC per ~120,000.
+- **Medicine list** — drawn from the National List of Essential Medicines.
+- **Clinical consumption norms** — ORS at 6 sachets per diarrhoeal case,
+  artemether-lumefantrine at 1 course per malaria case, and so on. These come
+  from standard treatment guidelines.
+- **Seasonal shape** — monsoon-driven peaks in diarrhoeal, cholera and malaria
+  incidence, modelled on published IDSP seasonal patterns for south Indian
+  districts.
 
-**Why this matters:** live PHC inventory APIs are not publicly available in India.
-Rather than generating random numbers, consumption is inferred from real
-epidemiology. The ingestion API accepts DVDMS-shaped records, so a state replaces
-this with its live feed without changing anything else.
+#### What is synthesised
+
+- **Stock levels, receipts and issues.** No public API exposes live PHC
+  inventory. These are computed forward from disease incidence through the
+  clinical norms above, with procurement modelled as a 30-day indent cycle,
+  7–21 day lead times, and probabilistic delivery delays that differ by district.
+
+#### What this does not claim
+
+This data is **structurally plausible, not empirically validated**. It reproduces
+the shape of the problem — monsoon demand spikes, indent-cycle sawtooth patterns,
+chronic under-supply in some districts — but the specific numbers are not
+measurements of any real facility.
+
+#### Why that is sufficient for this prototype
+
+The system's value is in the pipeline, not the numbers: forecasting from disease
+surveillance, converting forecasts to reorder decisions, solving redistribution
+under constraints, and federating models without pooling data. Every one of those
+operates identically on real DVDMS records.
+
+The ingestion API (`docs/openapi.yaml`) accepts DVDMS-shaped records. A state
+connects its live export and the synthetic layer is replaced — nothing else in
+the system changes.
 """)

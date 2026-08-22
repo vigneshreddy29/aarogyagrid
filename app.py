@@ -41,8 +41,10 @@ TIER_COLOR = {"STOCKOUT": "#8B0000", "CRITICAL": "#DC2626",
               "WARNING": "#F59E0B", "WATCH": "#FCD34D", "OK": "#10B981"}
 
 st.title("AarogyaGrid")
-st.caption("Predictive stock-out prevention for India's primary health network — "
-           "a forecasting and redistribution layer above existing DVDMS/e-Aushadhi systems")
+st.caption("**Prototype coverage:** Telangana — 3 districts, 37 facilities. "
+           "The architecture is state → district → facility, so additional "
+           "states connect as additional nodes. The demonstration data is not "
+           "national.")
 
 # ---------------------------------------------------------------- KPIs
 c1, c2, c3, c4, c5 = st.columns(5)
@@ -187,9 +189,11 @@ with tab3:
 # ---------------------------------------------------------------- AI briefs
 with tab4:
     st.subheader("Gemini-generated field briefings")
-    st.caption("Each alert is converted into a causal explanation an officer "
-               "can act on, and translated for the PHC pharmacist. Generated "
-               "with Gemini and cached — no live API call on page load.")
+    st.caption("Each alert is converted into an operational briefing an officer "
+               "can act on, and translated for the PHC pharmacist. Gemini "
+               "receives stock level, burn rate, reorder point, season and "
+               "transfer options — and turns them into an instruction. "
+               "Generated ahead of time and cached.")
 
     if not briefs:
         st.warning("No briefs cached. Run `python src/gemini/briefs.py`.")

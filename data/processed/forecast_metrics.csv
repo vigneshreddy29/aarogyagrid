@@ -1,0 +1,33 @@
+sku,model,MAE,RMSE,WAPE,MAPE
+ORS Sachet (WHO formula),Naive (yesterday),20.33,35.53,11.64,12.36
+ORS Sachet (WHO formula),7-day moving average,24.96,45.3,14.29,14.0
+ORS Sachet (WHO formula),Seasonal naive (t-7),38.25,68.23,21.9,20.78
+ORS Sachet (WHO formula),Ridge + surveillance,19.77,34.17,11.32,11.69
+Zinc Sulphate 20mg,Naive (yesterday),31.1,56.32,12.05,13.61
+Zinc Sulphate 20mg,7-day moving average,38.85,72.89,15.05,15.05
+Zinc Sulphate 20mg,Seasonal naive (t-7),59.17,107.01,22.92,22.0
+Zinc Sulphate 20mg,Ridge + surveillance,30.21,54.01,11.7,12.84
+Paracetamol 500mg,Naive (yesterday),11.78,21.39,11.89,13.84
+Paracetamol 500mg,7-day moving average,14.76,28.9,14.9,14.96
+Paracetamol 500mg,Seasonal naive (t-7),22.65,42.96,22.86,21.69
+Paracetamol 500mg,Ridge + surveillance,11.88,20.75,11.99,12.91
+Artemether-Lumefantrine,Naive (yesterday),2.12,3.58,12.54,12.73
+Artemether-Lumefantrine,7-day moving average,2.71,4.4,16.04,16.7
+Artemether-Lumefantrine,Seasonal naive (t-7),4.32,6.66,25.55,26.67
+Artemether-Lumefantrine,Ridge + surveillance,2.04,3.38,12.08,12.74
+Ciprofloxacin 500mg,Naive (yesterday),0.42,0.94,15.35,15.91
+Ciprofloxacin 500mg,7-day moving average,0.65,1.24,23.66,24.36
+Ciprofloxacin 500mg,Seasonal naive (t-7),1.0,1.91,36.31,35.7
+Ciprofloxacin 500mg,Ridge + surveillance,0.47,0.89,17.02,18.45
+Iron Folic Acid,Naive (yesterday),19.14,35.67,11.77,13.94
+Iron Folic Acid,7-day moving average,23.18,45.73,14.25,14.3
+Iron Folic Acid,Seasonal naive (t-7),34.69,67.8,21.32,19.75
+Iron Folic Acid,Ridge + surveillance,19.18,34.34,11.79,12.83
+Amoxicillin 500mg,Naive (yesterday),18.4,34.03,12.22,13.47
+Amoxicillin 500mg,7-day moving average,22.47,42.45,14.92,14.69
+Amoxicillin 500mg,Seasonal naive (t-7),34.13,63.0,22.67,21.12
+Amoxicillin 500mg,Ridge + surveillance,18.1,32.49,12.02,12.6
+Metformin 500mg,Naive (yesterday),38.53,68.42,11.66,13.36
+Metformin 500mg,7-day moving average,46.87,90.26,14.18,14.29
+Metformin 500mg,Seasonal naive (t-7),68.59,132.82,20.76,20.0
+Metformin 500mg,Ridge + surveillance,38.4,66.35,11.62,12.48

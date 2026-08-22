@@ -1,0 +1,146 @@
+openapi: 3.0.3
+info:
+  title: AarogyaGrid Ingestion API
+  version: 1.0.0
+  description: >
+    Open ingestion interface for Indian health supply chain data.
+    Accepts DVDMS/e-Aushadhi-shaped stock records. A state does not
+    adopt a new inventory system — it points its existing export at
+    this endpoint. Published as a Digital Public Good; the schema is
+    open and unversioned to any vendor.
+  license:
+    name: MIT
+
+servers:
+  - url: https://aarogyagrid-bwai.streamlit.app/api
+    description: Reference implementation
+
+paths:
+  /v1/stock:
+    post:
+      summary: Submit stock ledger records
+      description: >
+        Accepts a batch of daily stock movements per facility and SKU.
+        Field names mirror DVDMS stock register columns so that an
+        existing state export requires mapping, not restructuring.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [records]
+              properties:
+                state:
+                  type: string
+                  example: Telangana
+                records:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/StockRecord'
+      responses:
+        '202':
+          description: Accepted for processing
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accepted: {type: integer, example: 1420}
+                  rejected: {type: integer, example: 0}
+                  errors:
+                    type: array
+                    items: {type: string}
+        '400':
+          description: Schema validation failed
+
+  /v1/alerts:
+    get:
+      summary: Retrieve current stock-out alerts
+      parameters:
+        - {name: district, in: query, schema: {type: string}}
+        - name: tier
+          in: query
+          schema:
+            type: string
+            enum: [STOCKOUT, CRITICAL, WARNING, WATCH, OK]
+      responses:
+        '200':
+          description: Alert list
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {$ref: '#/components/schemas/Alert'}
+
+  /v1/transfers:
+    get:
+      summary: Retrieve recommended redistribution orders
+      parameters:
+        - {name: district, in: query, schema: {type: string}}
+      responses:
+        '200':
+          description: Transfer orders
+
+  /v1/federation/weights:
+    get:
+      summary: Fetch the current global model
+      description: >
+        Returns model coefficients and feature statistics only.
+        No inventory, patient, or facility records are ever exposed
+        through this endpoint.
+      responses:
+        '200':
+          description: Model parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sku_code: {type: string}
+                  coefficients:
+                    type: array
+                    items: {type: number}
+                  feature_names:
+                    type: array
+                    items: {type: string}
+                  contributing_nodes: {type: integer}
+
+    post:
+      summary: Contribute locally trained weights
+      description: >
+        A state node submits coefficients trained on its own data.
+        Raw records must not be sent to this endpoint.
+      responses:
+        '202':
+          description: Weights accepted for aggregation
+
+components:
+  schemas:
+    StockRecord:
+      type: object
+      required: [facility_id, sku_code, date, closing_stock]
+      properties:
+        facility_id:   {type: string, example: YAD-PHC-03}
+        facility_type: {type: string, enum: [PHC, CHC, DH, SC]}
+        district:      {type: string, example: Yadadri Bhuvanagiri}
+        sku_code:      {type: string, example: ORS001, description: NLEM code}
+        date:          {type: string, format: date}
+        opening_stock: {type: integer}
+        receipts:      {type: integer}
+        issues:        {type: integer}
+        closing_stock: {type: integer}
+        expiry_date:   {type: string, format: date}
+
+    Alert:
+      type: object
+      properties:
+        facility_id:      {type: string}
+        sku_code:         {type: string}
+        current_stock:    {type: integer}
+        daily_burn:       {type: number}
+        days_to_stockout: {type: number}
+        reorder_point:    {type: integer}
+        tier:             {type: string}
+        brief_en:         {type: string}
+        brief_local:      {type: string}

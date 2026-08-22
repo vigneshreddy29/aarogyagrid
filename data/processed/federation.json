@@ -1,0 +1,26 @@
+[
+  {
+    "node":"Telangana (data-rich)",
+    "train_rows":6780,
+    "local_weight":0.77,
+    "local_mape":10.21,
+    "federated_mape":10.2,
+    "improvement_%":0.1
+  },
+  {
+    "node":"Odisha (moderate)",
+    "train_rows":2532,
+    "local_weight":0.56,
+    "local_mape":12.04,
+    "federated_mape":11.02,
+    "improvement_%":8.4
+  },
+  {
+    "node":"Meghalaya (data-poor)",
+    "train_rows":310,
+    "local_weight":0.13,
+    "local_mape":23.49,
+    "federated_mape":20.85,
+    "improvement_%":11.2
+  }
+]

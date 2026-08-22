@@ -76,7 +76,7 @@ The consequence isn't only clinical. Roughly **48% of Indian healthcare spending
                 │
                 ▼
      ┌──────────────────────┐
-     │   INGESTION API      │  open schema, DVDMS-shaped records
+     │   INGESTION API      │  open spec, DVDMS-shaped records
      └──────────┬───────────┘  a state points its existing export here
                 │
                 ▼
@@ -289,7 +289,7 @@ real PHC records, and we do not claim it is.
 
 <br>
 
-The generator is open source in [`src/generator/`](src/generator/). The ingestion API ([`docs/openapi.yaml`](docs/openapi.yaml)) is the interface a real state connects to swap synthesised data for live DVDMS records — no other change required.
+The generator is open source in [`src/generator/`](src/generator/). The ingestion schema ([`docs/openapi.yaml`](docs/openapi.yaml)) specifies the interface a state's DVDMS export would connect to — published as an open specification so any vendor can implement against it. The endpoints are specified but not yet implemented; the schema itself is the Digital Public Good artifact, with field names mirroring DVDMS stock register columns so that adoption requires mapping rather than restructuring.
 
 ---
 
@@ -355,7 +355,7 @@ aarogyagrid/
 
 No new hardware. No new data collection. No behaviour change asked of frontline staff.
 
-A state connects its existing DVDMS export to the ingestion API and immediately receives forecasts, alerts, and transfer recommendations computed against data it already holds.
+A state maps its existing DVDMS export to the published ingestion schema and receives forecasts, alerts, and transfer recommendations computed against data it already holds.
 
 </td>
 <td width="50%" valign="top">

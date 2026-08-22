@@ -90,6 +90,7 @@ def main():
     # a facility burning <1 unit/day is not an operationally meaningful alert
     alerts.loc[(alerts.daily_burn < 1.0) & (alerts.tier.isin(["CRITICAL", "STOCKOUT"])),
                "tier"] = "WATCH"
+    alerts.to_parquet(f"{OUT}/alerts.parquet", index=False)
 
     print("\n--- alerts by tier ---")
     print(alerts["tier"].value_counts().to_string())

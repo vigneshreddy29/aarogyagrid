@@ -1,9 +1,11 @@
 """AarogyaGrid — dashboard."""
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-
+from src.gemini.nl_query import run as nl_run, build_frame
 st.set_page_config(page_title="AarogyaGrid", page_icon="🏥", layout="wide")
 
 OUT = "data/processed"
@@ -51,6 +53,45 @@ c3.metric("Preventable stock-outs", int((alerts.tier == "CRITICAL").sum()),
           help="Stock remains, but will deplete before resupply")
 c4.metric("Transfer orders", len(transfers))
 c5.metric("Courses protected", f"{int(transfers.courses_covered.sum()):,}")
+
+st.divider()
+# ---------------------------------------------------------------- NL query
+with st.expander("🔍 **Ask a question** — natural language search across all facilities", expanded=False):
+    st.caption("Gemini translates your question into a query over the facility "
+               "data. Try: *understaffed facilities in Yadadri running out of "
+               "antimalarials* · *facilities at bed capacity that are also "
+               "running out of medicine* · *which PHCs are already out of ORS*")
+
+    q = st.text_input("Question", placeholder="e.g. which CHCs are running out of antibiotics?",
+                      label_visibility="collapsed")
+
+    if q:
+        with st.spinner("Interpreting…"):
+            try:
+                res, expr, err = nl_run(q)
+            except Exception as e:
+                res, expr, err = None, None, str(e)
+
+        if err:
+            st.error(err)
+            if expr:
+                st.code(expr, language="text")
+        elif res is None or len(res) == 0:
+            st.info("No facilities match that query.")
+            if expr:
+                st.code(expr, language="text")
+        else:
+            st.success(f"{len(res)} matching facility-medicine pairs")
+            st.dataframe(
+                res[["facility_name", "facility_type", "district", "sku_name",
+                     "current_stock", "days_to_stockout", "tier",
+                     "occupancy_pct", "staff_present_pct"]],
+                use_container_width=True, hide_index=True, height=300)
+            with st.expander("Query Gemini generated"):
+                st.code(expr, language="python")
+                st.caption("Validated against a blocklist before execution — "
+                           "only read operations on the in-memory dataframe "
+                           "are permitted.")
 
 st.divider()
 

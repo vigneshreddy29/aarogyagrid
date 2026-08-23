@@ -38,18 +38,28 @@ SKUS = [
     ("MET001", "Metformin 500mg",          "tablet", "chronic",     60,   1095),
 ]
 
-# ---------------------------------------------------------------- seasonality
-# Monthly multipliers (Jan..Dec) modelled on published IDSP seasonal
-# patterns for south Indian districts. Monsoon = Jun-Sep.
-
+# Monthly multipliers calibrated against 218 IDSP outbreak reports for
+# Telangana (2009-2023), from EpiClim (Zenodo 14580510, arXiv 2501.18602).
+#
+# IDSP records outbreak REPORTS, not routine caseload, so the raw monthly
+# counts overstate amplitude — a low-report month means fewer outbreaks were
+# declared, not that incidence collapsed. We therefore take the IDSP monthly
+# distribution as the SHAPE and compress it around 1.0 by a factor of 0.55,
+# which preserves the peak ordering (Jul > Aug > Jun > Sep for diarrhoeal)
+# while keeping amplitude within a plausible range for routine demand.
+#
+# Source: data/raw/Final_data.csv
 SEASONALITY = {
-    "diarrhoeal": [0.6, 0.6, 0.7, 0.9, 1.2, 1.9, 2.4, 2.2, 1.7, 1.1, 0.8, 0.6],
-    "malaria":    [0.5, 0.5, 0.6, 0.8, 1.1, 1.6, 2.1, 2.3, 1.9, 1.3, 0.8, 0.6],
-    "cholera":    [0.4, 0.4, 0.6, 0.9, 1.3, 2.0, 2.5, 2.1, 1.5, 0.9, 0.6, 0.4],
-    "fever":      [0.9, 0.8, 0.8, 0.9, 1.0, 1.3, 1.6, 1.7, 1.5, 1.2, 1.0, 0.9],
-    "chronic":    [1.0] * 12,   # chronic demand is flat by design
-}
+    # IDSP diarrhoeal + cholera: 0,6,6,6,7,23,26,25,17,11,5,2
+    "diarrhoeal": [0.63, 0.71, 0.71, 0.71, 0.76, 1.46, 1.59, 1.55, 1.20, 0.93, 0.67, 0.54],
+    "cholera":    [0.63, 0.71, 0.71, 0.71, 0.76, 1.46, 1.59, 1.55, 1.20, 0.93, 0.67, 0.54],
 
+    # IDSP dengue + chikungunya: 2,2,4,11,5,4,12,14,12,6,4,2
+    "fever":      [0.62, 0.62, 0.79, 1.39, 0.87, 0.79, 1.47, 1.63, 1.47, 0.96, 0.79, 0.62],
+    "malaria":    [0.62, 0.62, 0.79, 1.39, 0.87, 0.79, 1.47, 1.63, 1.47, 0.96, 0.79, 0.62],
+
+    "chronic":    [1.0] * 12,
+}
 # ---------------------------------------------------------------- incidence
 # Diarrhoeal baseline is calibrated against NFHS-5 (2019-21) measured
 # prevalence for Telangana: 5.46% of under-5 children reported diarrhoea in

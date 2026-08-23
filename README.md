@@ -79,7 +79,7 @@ The problem statement asks for visibility into medicines, **patient footfall**, 
    FACILITY-SEEKING           NFHS-5: 71.1% of cases reach a provider
           ↓
    PATIENT FOOTFALL           OPD · IPD · emergency · referrals
-          ↓                   measured r = 0.881 against units issued
+          ↓                   measured r = 0.741 against units issued
    MEDICINE DEMAND            clinical treatment courses
           ↓
    STOCK DEPLETION            reorder point · safety stock · days remaining
@@ -138,20 +138,20 @@ Every model is compared against **naive persistence**, a **7-day moving average*
 
 | Medicine | Ridge MAPE | Best baseline | Improvement | Model used |
 |---|:---:|:---:|:---:|:---:|
-| **Metformin 500mg** | 12.51% | 13.54% | 🟢 **+7.6%** | Ridge |
-| **Paracetamol 500mg** | 11.36% | 12.28% | 🟢 **+7.5%** | Ridge |
-| **Amoxicillin 500mg** | 13.01% | 14.00% | 🟢 **+7.1%** | Ridge |
-| **Iron Folic Acid** | 11.76% | 12.64% | 🟢 **+7.0%** | Ridge |
-| **ORS Sachet** | 11.82% | 12.54% | 🟢 **+5.8%** | Ridge |
-| **Zinc Sulphate 20mg** | 15.48% | 16.14% | 🟢 **+4.1%** | Ridge |
-| **Artemether-Lumefantrine** | 13.22% | 13.39% | 🟢 **+1.3%** | Ridge |
-| Ciprofloxacin 500mg | 18.91% | 16.39% | −15.4% | Naive (fallback) |
+| **Iron Folic Acid** | 11.75% | 12.62% | 🟢 **+6.9%** | Ridge |
+| **Zinc Sulphate 20mg** | 12.40% | 13.28% | 🟢 **+6.6%** | Ridge |
+| **Metformin 500mg** | 16.84% | 18.02% | 🟢 **+6.5%** | Ridge |
+| **ORS Sachet** | 11.53% | 12.30% | 🟢 **+6.3%** | Ridge |
+| **Amoxicillin 500mg** | 12.11% | 12.75% | 🟢 **+5.0%** | Ridge |
+| **Paracetamol 500mg** | 13.94% | 14.51% | 🟢 **+3.9%** | Ridge |
+| Artemether-Lumefantrine | 16.96% | 16.04% | −5.7% | Naive (fallback) |
+| Ciprofloxacin 500mg | 17.38% | 14.80% | −17.4% | Naive (fallback) |
 
 </div>
 
-> **One medicine is reported as a failure, and the system falls back to naive persistence for it.**
+> **Two medicines are reported as failures, and the system falls back to naive persistence for them.**
 >
-> This is a deliberate design choice, not an oversight. Ridge helps where demand follows a trackable seasonal signal. It hurts where events are sparse and stochastic — cholera cases are rare enough that the surveillance feature is mostly noise, and the model overfits it. Per-SKU model selection is applied automatically on held-out data: if Ridge does not beat naive, naive is used in production.
+> This is a deliberate design choice, not an oversight. Ridge helps where demand follows a trackable seasonal signal. It hurts where events are sparse and stochastic — antimalarials and cholera antibiotics have demand governed by discrete outbreaks rather than steady seasonal consumption, so the surveillance feature is mostly noise and the model overfits it. Per-SKU model selection is applied automatically on held-out data: if Ridge does not beat naive, naive is used in production.
 >
 > Full metrics — MAE, RMSE, WAPE and MAPE across all four models and all eight SKUs — are written to [`data/processed/forecast_metrics.csv`](data/processed/forecast_metrics.csv).
 >
@@ -173,7 +173,7 @@ This costs accuracy — an earlier version using same-week counts scored substan
 
 <div align="center">
 
-| 22 | 50 | 6.0 days | 18 |
+| 21 | 37 | 5.8 days | 18 |
 |:---:|:---:|:---:|:---:|
 | already at zero<br>*(the cost of no warning)* | preventable<br>stock-outs caught | median warning<br>lead time | alerts with<br>7–14 days notice |
 
@@ -187,16 +187,16 @@ A steady-state forecast cannot answer *"what if dengue doubles next week?"* Each
 
 <div align="center">
 
-| Scenario | At risk (normal → surge) | Newly critical | Warning time lost | Fail inside onset window |
+| Scenario | At risk (normal → surge) | Newly critical | Warning time lost | Fail inside onset |
 |---|:---:|:---:|:---:|:---:|
-| **Flood displacement** | 72 → 103 | **30** | **23.8 days** | 26 within 3 days |
-| **Dengue outbreak** | 72 → 91 | 18 | 18.6 days | 35 within 7 days |
-| **Malaria surge** | 72 → 88 | 15 | 19.0 days | 25 within 5 days |
-| **Heatwave** | 72 → 87 | 14 | 14.8 days | 8 within 2 days |
+| **Flood displacement** | 58 → 113 | **50** | 25.4 days | 22 within 3 days |
+| **Malaria surge** | 58 → 83 | 20 | **26.9 days** | 21 within 5 days |
+| **Dengue outbreak** | 58 → 81 | 18 | 20.1 days | 28 within 7 days |
+| **Heatwave** | 58 → 78 | 15 | 17.0 days | 6 within 2 days |
 
 </div>
 
-> A flood erases **nearly 24 days of warning** across affected medicines. Twenty-six facility-medicine pairs deplete inside the 3-day onset window — faster than a district indent can be raised and delivered. Pre-positioning has to happen before the surge is visible in case counts.
+> A flood nearly doubles the number of facility-medicine pairs at risk — from 58 to 113 — and erases 25 days of warning. Twenty-two pairs deplete inside the 3-day onset window, faster than a district indent can be raised and delivered. Pre-positioning has to happen before the surge is visible in case counts.
 
 <br>
 
@@ -204,7 +204,7 @@ A steady-state forecast cannot answer *"what if dengue doubles next week?"* Each
 
 <div align="center">
 
-| 92 | 83 | 89,690 | 6,927 |
+| 71 | 64 | 43,697 | 3,462 |
 |:---:|:---:|:---:|:---:|
 | transfer orders | cross-district | units moved | treatment courses<br>protected |
 
@@ -213,10 +213,10 @@ A steady-state forecast cannot answer *"what if dengue doubles next week?"* Each
 **Sample output — not a chart, an instruction:**
 
 ```
-MOVE 1,610 × ORS Sachet (WHO formula)
-  FROM  CHC Narketpally (Nalgonda) — 7,794 surplus units
-  TO    PHC Valigonda (Yadadri Bhuvanagiri) — already at zero
-  34.4 km · ~58 min · covers 268 treatment courses
+MOVE 881 × ORS Sachet (WHO formula)
+  FROM  CHC Narketpally (Nalgonda) — 6,570 surplus units
+  TO    PHC Ramannapet (Yadadri Bhuvanagiri) — already at zero
+  17.8 km · ~30 min · covers 147 treatment courses
 ```
 
 Constraints enforced: the donor must retain its own reorder point, transferred batches must outlast the receiver's consumption window, distance is capped at 75 km, and receiver storage capacity is respected.
@@ -231,9 +231,9 @@ Constraints enforced: the donor must retain its own reorder point, transferred b
 
 | Node | Training rows | Alone | Federated | Gain |
 |---|:---:|:---:|:---:|:---:|
-| Data-rich *(18 months)* | 6,780 | 9.11% | 9.08% | +0.3% |
-| Moderate *(9 months)* | 2,532 | 12.96% | 12.45% | 🟢 **+3.9%** |
-| Data-poor *(3 months)* | 310 | 19.45% | 17.45% | 🟢 **+10.3%** |
+| Data-rich *(18 months)* | 6,780 | 9.48% | 9.51% | −0.4% |
+| Moderate *(9 months)* | 2,532 | 10.59% | 10.22% | 🟢 **+3.5%** |
+| Data-poor *(3 months)* | 310 | 25.32% | 18.98% | 🟢 **+25.0%** |
 
 </div>
 
@@ -242,7 +242,7 @@ Constraints enforced: the donor must retain its own reorder point, transferred b
 > **What crosses a node boundary:** 13 model coefficients, 13 feature statistics.
 > **What never leaves:** inventory records, patient counts, facility data.
 >
-> The gain scales inversely with local data volume, and nobody is made worse off — that monotonic relationship is the theoretical prediction for federated averaging, and it holds.
+> The gain scales inversely with local data volume: **data-rich nodes are essentially unaffected (within ±0.5%), while data-poor nodes gain substantially.** The blend weight is set by each node's own data volume, so a node with abundant history keeps its local model almost entirely — which is why the data-rich result sits marginally on either side of zero rather than improving.
 >
 > **How the nodes are constructed:** they are simulated by partitioning our districts and giving each a deliberately different amount of training history. They carry state names in the interface to make the scenario legible, but the underlying facilities are all in Telangana. What is demonstrated is the *federation mechanism*, which is identical regardless of how nodes are partitioned.
 
@@ -316,14 +316,21 @@ We state this plainly rather than obscure it.
 | Medicine list | National List of Essential Medicines (NLEM) | ✅ **Real** |
 | **Diarrhoeal incidence** | **NFHS-5 (2019–21), Telangana** — 5.46% two-week prevalence in under-5s | ✅ **Real, downloaded** |
 | **Treatment rates** | **NFHS-5, Telangana** — 61.8% receive ORS, 39.3% receive zinc, 71.1% reach a provider | ✅ **Real, downloaded** |
-| Seasonal shape | Modelled on published IDSP seasonal patterns | ⚠️ **Modelled** |
+| **Seasonal shape** | **Calibrated against 218 IDSP outbreak reports for Telangana (2009–2023)** via EpiClim (Zenodo 14580510, arXiv 2501.18602) — diarrhoeal outbreaks cluster in Jul, Aug, Jun, Sep; vector-borne in Aug, Jul, Sep | ✅ **Real, downloaded** |
 | Stock levels, receipts, issues | Derived from the above via documented clinical norms | 🔶 **Synthesised** |
 | Patient footfall | Derived from incidence, catchment and IPHS service-load norms | 🔶 **Synthesised** |
 | Bed occupancy, staff attendance | Generated against IPHS staffing and bed norms | 🔶 **Synthesised** |
 | Road distances | Haversine × 1.35 rural road factor | 🔶 **Derived** |
 
-Source file: [`data/raw/NFHS_5_Factsheets_Data.xls`](data/raw/) — downloaded from data.gov.in.
-Facility placement: [`src/mandals.py`](src/mandals.py).
+**Source files:** [`data/raw/NFHS_5_Factsheets_Data.xls`](data/raw/) (data.gov.in) · [`data/raw/Final_data.csv`](data/raw/) (EpiClim, Zenodo) · facility placement in [`src/mandals.py`](src/mandals.py).
+
+<br>
+
+> ### On the seasonality calibration
+>
+> IDSP records outbreak **reports**, not routine caseload. A low-report month means fewer outbreaks were declared, not that incidence collapsed.
+>
+> We therefore use the IDSP monthly distribution as the **shape** of the seasonality curve, compressed around 1.0 to keep amplitude plausible for routine demand. The peak ordering is preserved exactly; the amplitude is not taken literally.
 
 <br>
 
@@ -333,7 +340,7 @@ Facility placement: [`src/mandals.py`](src/mandals.py).
 >
 > It validates that the generator applies clinical norms consistently across 18 months and three districts. It is **not** evidence that the data matches real PHC records, and we do not claim it is.
 >
-> The **footfall → demand** correlation (r = 0.881 median) is a different measurement: it tests whether patient volume predicts medicine movement, computed weekly and only on days when stock was actually available. A facility that has run out issues nothing regardless of how many patients arrive — including those days would mask the relationship rather than measure it.
+> The **footfall → demand** correlation is a different measurement: **median r = 0.741 across facilities, 28 of 37 above 0.5**. It tests whether patient volume predicts medicine movement, computed weekly and only on days when stock was actually available. A facility that has run out issues nothing regardless of how many patients arrive — including those days would mask the relationship rather than measure it.
 
 <br>
 
@@ -406,9 +413,9 @@ aarogyagrid/
 ├── app.py                            Streamlit console, 9 views
 ├── style.py                          visual layer
 ├── docs/openapi.yaml                 open ingestion schema
-├── data/raw/                         NFHS-5 source file
+├── data/raw/                         NFHS-5 and EpiClim source files
 ├── src/
-│   ├── config.py                     districts, SKUs, NFHS-calibrated incidence
+│   ├── config.py                     districts, SKUs, calibrated incidence
 │   ├── mandals.py                    real Telangana mandal locations
 │   ├── generator/
 │   │   ├── build_data.py             derives inventory from epidemiology
@@ -470,7 +477,8 @@ Stated here rather than left for a reviewer to find.
 - **Facility coordinates are mandal headquarters**, accurate to 1–2 km, not surveyed facility entrances.
 - **Ingestion endpoints are specified, not implemented.** The schema is published; the server is not built.
 - **Federation nodes are simulated** by partitioning districts with unequal training history, not by connecting real state systems.
-- **One SKU falls back to naive forecasting** because Ridge does not beat the baseline on sparse, event-driven demand.
+- **Two SKUs fall back to naive forecasting** (antimalarials and cholera antibiotics) because Ridge does not beat the baseline on sparse, event-driven demand.
+- **Seasonality is calibrated on outbreak reports, not routine incidence.** The curve's shape is empirical; its amplitude is a modelling choice.
 - **The Resilience Index is a prototype policy instrument.** Its weights are a starting proposal and would need calibration against outcome data before operational use.
 
 ---

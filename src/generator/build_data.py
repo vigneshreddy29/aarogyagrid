@@ -17,6 +17,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..",
 import numpy as np
 import pandas as pd
 from datetime import date, timedelta
+from src.mandals import MANDALS, NHM_CONFIRMED
 
 from src.config import (
     DISTRICTS, STATE, SKUS, SEASONALITY, BASE_INCIDENCE,NFHS_TREATMENT_RATE,
@@ -42,35 +43,47 @@ CHC_POP = 120_000     # 1 CHC per ~120,000
 
 # ------------------------------------------------------------------ 1. facilities
 def build_facilities():
+    """Facilities placed at real mandal headquarters, not scattered randomly."""
     rows = []
     for d in DISTRICTS:
-        lat0, lon0 = CENTROIDS[d["name"]]
-        for i in range(d["phc"]):
-            rows.append({
-                "facility_id":   f"{d['name'][:3].upper()}-PHC-{i+1:02d}",
-                "facility_name": f"PHC {d['name']} {i+1}",
-                "facility_type": "PHC",
-                "district":      d["name"],
-                "state":         STATE,
-                "profile":       d["profile"],
-                "latitude":      round(lat0 + rng.uniform(-0.28, 0.28), 5),
-                "longitude":     round(lon0 + rng.uniform(-0.28, 0.28), 5),
-                "catchment_population": int(PHC_POP * rng.uniform(0.75, 1.30)),
-            })
+        mandals = MANDALS[d["name"]]
+        need = d["phc"] + d["chc"]
+        if len(mandals) < need:
+            raise ValueError(f"{d['name']}: {len(mandals)} mandals, need {need}")
+
+        # CHCs go to the largest mandals (listed first), PHCs to the rest
         for i in range(d["chc"]):
+            name, lat, lon = mandals[i]
             rows.append({
                 "facility_id":   f"{d['name'][:3].upper()}-CHC-{i+1:02d}",
-                "facility_name": f"CHC {d['name']} {i+1}",
+                "facility_name": f"CHC {name}",
                 "facility_type": "CHC",
+                "mandal":        name,
                 "district":      d["name"],
                 "state":         STATE,
                 "profile":       d["profile"],
-                "latitude":      round(lat0 + rng.uniform(-0.22, 0.22), 5),
-                "longitude":     round(lon0 + rng.uniform(-0.22, 0.22), 5),
+                "latitude":      lat,
+                "longitude":     lon,
+                "nhm_confirmed": name in NHM_CONFIRMED,
                 "catchment_population": int(CHC_POP * rng.uniform(0.80, 1.25)),
             })
-    return pd.DataFrame(rows)
 
+        for i in range(d["phc"]):
+            name, lat, lon = mandals[d["chc"] + i]
+            rows.append({
+                "facility_id":   f"{d['name'][:3].upper()}-PHC-{i+1:02d}",
+                "facility_name": f"PHC {name}",
+                "facility_type": "PHC",
+                "mandal":        name,
+                "district":      d["name"],
+                "state":         STATE,
+                "profile":       d["profile"],
+                "latitude":      lat,
+                "longitude":     lon,
+                "nhm_confirmed": name in NHM_CONFIRMED,
+                "catchment_population": int(PHC_POP * rng.uniform(0.75, 1.30)),
+            })
+    return pd.DataFrame(rows)
 
 # ------------------------------------------------------------------ 2. disease
 def build_disease(facilities, start, days):

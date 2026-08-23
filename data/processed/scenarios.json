@@ -4,47 +4,47 @@
     "note":"Vector-borne surge. Fever management and rehydration spike; platelet monitoring drives admissions. Modelled on IDSP post-monsoon dengue patterns in south India.",
     "onset_days":7,
     "footfall_mult":2.4,
-    "baseline_at_risk":76,
-    "surge_at_risk":93,
-    "newly_at_risk":16,
-    "fail_before_onset":36,
-    "median_days_lost":17.0,
-    "worst_facility":"PHC Yadadri Bhuvanagiri 8"
+    "baseline_at_risk":72,
+    "surge_at_risk":91,
+    "newly_at_risk":18,
+    "fail_before_onset":35,
+    "median_days_lost":18.6,
+    "worst_facility":"PHC Addagudur"
   },
   {
     "scenario":"Flood displacement",
     "note":"Water contamination and displacement camps. Diarrhoeal and cholera caseload rises sharply within days of inundation.",
     "onset_days":3,
     "footfall_mult":2.9,
-    "baseline_at_risk":76,
-    "surge_at_risk":107,
+    "baseline_at_risk":72,
+    "surge_at_risk":103,
     "newly_at_risk":30,
-    "fail_before_onset":25,
-    "median_days_lost":24.35,
-    "worst_facility":"PHC Yadadri Bhuvanagiri 8"
+    "fail_before_onset":26,
+    "median_days_lost":23.8,
+    "worst_facility":"PHC Addagudur"
   },
   {
     "scenario":"Heatwave",
     "note":"Heat stress and dehydration. Chronic patients decompensate; ORS demand rises alongside cardiac and renal presentations.",
     "onset_days":2,
     "footfall_mult":1.7,
-    "baseline_at_risk":76,
-    "surge_at_risk":92,
-    "newly_at_risk":15,
-    "fail_before_onset":13,
-    "median_days_lost":13.3,
-    "worst_facility":"PHC Yadadri Bhuvanagiri 8"
+    "baseline_at_risk":72,
+    "surge_at_risk":87,
+    "newly_at_risk":14,
+    "fail_before_onset":8,
+    "median_days_lost":14.8,
+    "worst_facility":"PHC Addagudur"
   },
   {
     "scenario":"Malaria surge",
     "note":"Post-monsoon transmission peak. Antimalarial demand rises faster than any other class and substitutes poorly.",
     "onset_days":5,
     "footfall_mult":1.9,
-    "baseline_at_risk":76,
-    "surge_at_risk":96,
-    "newly_at_risk":19,
-    "fail_before_onset":34,
-    "median_days_lost":22.0,
-    "worst_facility":"PHC Yadadri Bhuvanagiri 8"
+    "baseline_at_risk":72,
+    "surge_at_risk":88,
+    "newly_at_risk":15,
+    "fail_before_onset":25,
+    "median_days_lost":19.0,
+    "worst_facility":"PHC Addagudur"
   }
 ]

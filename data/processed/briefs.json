@@ -1,162 +1,162 @@
 {
-  "YAD-PHC-07|ACT001": {
-    "facility": "PHC Yadadri Bhuvanagiri 7",
-    "sku": "Artemether-Lumefantrine",
-    "district": "Yadadri Bhuvanagiri",
-    "days_to_stockout": 13.8,
-    "english": "PHC Yadadri Bhuvanagiri 7 will run out of Artemether-Lumefantrine in 14 days. Current stock has fallen below the reorder point of 209 units while the daily burn rate of 13.5 units remains high due to the peak monsoon season increasing malaria transmission. Please initiate an immediate stock transfer of 206 units from the surplus at PHC Nalgonda located 69.5 km away.",
-    "telugu": "PHC యాదాద్రి భువనగిరి 7లో 14 రోజుల్లో Artemether-Lumefantrine నిల్వలు అయిపోనున్నాయి. ప్రస్తుతం ఉన్న నిల్వలు రీ-ఆర్డర్ పాయింట్ 209 యూనిట్ల కంటే తక్కువకు పడిపోయాయి. వర్షాకాలం కారణంగా మలేరియా వ్యాప్తి పెరిగి, రోజువారీ వినియోగం 13.5 యూనిట్లుగా కొనసాగుతోంది. కావున, 69.5 కి.మీ దూరంలో ఉన్న PHC నల్గొండలోని అదనపు నిల్వల నుండి 206 యూనిట్లను వెంటనే స్టాక్ బదిలీ చేయవలసిందిగా కోరుచున్నాము."
-  },
   "YAD-PHC-04|IFA001": {
-    "facility": "PHC Yadadri Bhuvanagiri 4",
+    "facility": "PHC Alair",
     "sku": "Iron Folic Acid",
     "district": "Yadadri Bhuvanagiri",
-    "days_to_stockout": 13.8,
-    "english": "PHC Yadadri Bhuvanagiri 4 will run out of Iron Folic Acid in 13 days. Current daily consumption of 93 units has already breached the reorder point of 1514 units, necessitating immediate replenishment to maintain supply during the peak monsoon season. Please transfer the required stock from the surplus at PHC Nalgonda located 62.5 km away.",
-    "telugu": "PHC యాదాద్రి భువనగిరి 4లో 13 రోజుల్లో Iron Folic Acid నిల్వలు అయిపోనున్నాయి. ప్రస్తుతం రోజుకు 93 యూనిట్ల వినియోగం జరుగుతుండటంతో, రీఆర్డర్ పాయింట్ అయిన 1514 యూనిట్ల స్థాయిని ఇప్పటికే దాటేశాము. వర్షాకాలంలో సరఫరాకు అంతరాయం కలగకుండా ఉండాలంటే వెంటనే నిల్వలను భర్తీ చేయాలి. కావున, 62.5 కి.మీ దూరంలో ఉన్న PHC నల్గొండలోని అదనపు నిల్వల నుండి అవసరమైన స్టాక్‌ను వెంటనే బదిలీ చేయవలసిందిగా కోరుచున్నాము."
+    "days_to_stockout": 13.5,
+    "english": "PHC Alair will run out of Iron Folic Acid in 13.5 days. Current stock has fallen to 1,656 units against the reorder point of 1,935 units due to a daily burn rate of 122.77 units. Request an immediate stock transfer from PHC Addagudur, located 34.9 km away.",
+    "telugu": "PHC Alair లో Iron Folic Acid స్టాక్ 13.5 రోజుల్లో అయిపోతుంది. రోజువారీ వినియోగం 122.77 యూనిట్లుగా ఉండటం వల్ల, ప్రస్తుత స్టాక్ రీఆర్డర్ పాయింట్ అయిన 1,935 యూనిట్ల కంటే తక్కువగా 1,656 యూనిట్లకు పడిపోయింది. కాబట్టి, 34.9 కి.మీ దూరంలో ఉన్న PHC Addagudur నుండి వెంటనే స్టాక్ బదిలీ (stock transfer) చేయవలసిందిగా అభ్యర్థించండి."
   },
-  "YAD-CHC-01|IFA001": {
-    "facility": "CHC Yadadri Bhuvanagiri 1",
-    "sku": "Iron Folic Acid",
-    "district": "Yadadri Bhuvanagiri",
-    "days_to_stockout": 13.6,
-    "english": "CHC Yadadri Bhuvanagiri 1 will run out of Iron Folic Acid in 13.6 days. Current daily consumption of 411.27 units has already breached the reorder point of 5969 units, necessitating immediate replenishment to maintain coverage during the peak monsoon season. Please initiate an emergency transfer of 3992 units from PHC Nalgonda 2 located 61.0 km away.",
-    "telugu": "CHC యాదాద్రి భువనగిరి 1లో Iron Folic Acid నిల్వలు మరో 13.6 రోజుల్లో అయిపోతాయి. ప్రస్తుతం రోజువారీ వినియోగం 411.27 యూనిట్లుగా ఉంది, ఇది ఇప్పటికే రీఆర్డర్ పాయింట్ 5969 యూనిట్లను దాటింది. వర్షాకాలంలో ఎటువంటి అంతరాయం లేకుండా సరఫరాను కొనసాగించడానికి తక్షణమే నిల్వలను భర్తీ చేయాలి. కావున, 61.0 కి.మీ దూరంలో ఉన్న PHC నల్గొండ 2 నుండి 3992 యూనిట్లను అత్యవసరంగా బదిలీ చేయవలసిందిగా కోరుచున్నాము."
-  },
-  "YAD-PHC-03|ACT001": {
-    "facility": "PHC Yadadri Bhuvanagiri 3",
+  "NAL-PHC-07|ACT001": {
+    "facility": "PHC Munugode",
     "sku": "Artemether-Lumefantrine",
-    "district": "Yadadri Bhuvanagiri",
-    "days_to_stockout": 13.4,
-    "english": "PHC Yadadri Bhuvanagiri 3 will run out of Artemether-Lumefantrine in 13 days. Current stock has fallen below the reorder point of 199 units due to a daily burn rate of 12.78 units, which is critical given the increased malaria risk during the peak monsoon season. Please initiate an immediate transfer of 206 units from the surplus stock at PHC Nalgonda, located 6.2 km away.",
-    "telugu": "PHC యాదాద్రి భువనగిరి 3లో 13 రోజుల్లో Artemether-Lumefantrine నిల్వలు అయిపోనున్నాయి. రోజుకు 12.78 యూనిట్ల వినియోగం కారణంగా, ప్రస్తుత నిల్వలు రీ-ఆర్డర్ పాయింట్ అయిన 199 యూనిట్ల కంటే తక్కువకు పడిపోయాయి. వర్షాకాలంలో మలేరియా ముప్పు ఎక్కువగా ఉన్నందున ఇది అత్యవసర పరిస్థితి. కావున, 6.2 కి.మీ దూరంలో ఉన్న PHC నల్గొండలోని అదనపు నిల్వల నుండి వెంటనే 206 యూనిట్లను బదిలీ చేయవలసిందిగా కోరుచున్నాము."
-  },
-  "NAL-PHC-04|ZNC001": {
-    "facility": "PHC Nalgonda 4",
-    "sku": "Zinc Sulphate 20mg",
     "district": "Nalgonda",
-    "days_to_stockout": 13.0,
-    "english": "PHC Nalgonda 4 will run out of Zinc Sulphate 20mg in 13 days. The current daily burn rate of 257.51 units has already fallen below the reorder point of 3938 units, and the peak monsoon season is driving a surge in diarrheal cases requiring this medication. Please initiate an immediate transfer of 2829 surplus units from PHC Nalgonda 12, located 10.4 km away.",
-    "telugu": "PHC నల్గొండ 4లో Zinc Sulphate 20mg నిల్వలు మరో 13 రోజుల్లో అయిపోతాయి. ప్రస్తుతం రోజుకు 257.51 యూనిట్ల చొప్పున వినియోగం జరుగుతోంది, ఇది రీ-ఆర్డర్ పాయింట్ అయిన 3938 యూనిట్ల కంటే తక్కువకు పడిపోయింది. వర్షాకాలం కారణంగా డయేరియా కేసులు పెరిగి, ఈ మందు అవసరం ఎక్కువగా ఉంది. కావున, 10.4 కి.మీ దూరంలో ఉన్న PHC నల్గొండ 12 నుండి 2829 అదనపు యూనిట్లను వెంటనే బదిలీ చేయవలసిందిగా కోరుచున్నాము."
+    "days_to_stockout": 12.9,
+    "english": "PHC Munugode will run out of Artemether-Lumefantrine in 13 days. Current stock has fallen below the reorder point of 251 units while the daily burn rate remains high due to the peak monsoon season. Please initiate an immediate transfer of 182 units from PHC Chandur, located 11.0 km away, to replenish the facility.",
+    "telugu": "PHC మునుగోడులో Artemether-Lumefantrine నిల్వలు మరో 13 రోజుల్లో అయిపోనున్నాయి. వర్షాకాలం కారణంగా మందుల వినియోగం ఎక్కువగా ఉండటంతో, ప్రస్తుత నిల్వలు రీ-ఆర్డర్ పాయింట్ (251 యూనిట్లు) కంటే తక్కువకు పడిపోయాయి. కావున, 11.0 కి.మీ దూరంలో ఉన్న PHC చందుర్ నుండి వెంటనే 182 యూనిట్లను ఇక్కడికి బదిలీ చేయవలసిందిగా కోరుచున్నాము."
   },
-  "YAD-CHC-01|ACT001": {
-    "facility": "CHC Yadadri Bhuvanagiri 1",
-    "sku": "Artemether-Lumefantrine",
-    "district": "Yadadri Bhuvanagiri",
-    "days_to_stockout": 12.1,
-    "english": "CHC Yadadri Bhuvanagiri 1 will run out of Artemether-Lumefantrine in 12 days. The stock has fallen below the reorder point of 798 units with a daily burn rate of 55.58 units, which is critical during the August peak monsoon season in Telangana when malaria risk is high. Please initiate an immediate stock transfer from PH",
-    "telugu": "CHC యాదాద్రి భువనగిరి 1లో 12 రోజుల్లో Artemether-Lumefantrine నిల్వలు అయిపోనున్నాయి. రోజువారీ వినియోగం 55.58 యూనిట్లుగా ఉండటంతో, నిల్వలు రీ-ఆర్డర్ పాయింట్ 798 యూనిట్ల కంటే తక్కువకు పడిపోయాయి. తెలంగాణలో ఆగస్టు నెలలో వర్షాకాలం కారణంగా మలేరియా ముప్పు ఎక్కువగా ఉన్నందున, ఇది అత్యంత కీలకమైన పరిస్థితి. దయచేసి వెంటనే PHC నుండి స్టాక్ బదిలీని ప్రారంభించండి."
+  "NAL-PHC-04|ORS001": {
+    "facility": "PHC Kethepally",
+    "sku": "ORS Sachet (WHO formula)",
+    "district": "Nalgonda",
+    "days_to_stockout": 12.5,
+    "english": "PHC Kethepally will run out of ORS sachets in 12 days. Current daily consumption has already breached the reorder point of 2689 units, and stock levels are critical given the high demand for diarrheal treatment during the peak monsoon season. Please initiate an immediate transfer of stock from CHC Chityala, located 12.4 km away, to replenish the facility.",
+    "telugu": "PHC Kethepallyలో మరో 12 రోజుల్లో ORS sachets నిల్వలు అయిపోతాయి. ప్రస్తుతం రోజువారీ వినియోగం 2689 యూనిట్ల రీఆర్డర్ పాయింట్‌ను దాటిపోయింది. వర్షాకాలంలో డయేరియా కేసులు ఎక్కువగా ఉండటం వల్ల స్టాక్ పరిస్థితి చాలా కీలకంగా ఉంది. కావున, 12.4 కి.మీ దూరంలో ఉన్న CHC Chityala నుండి వెంటనే స్టాక్‌ను బదిలీ చేసి, మా కేంద్రానికి పంపవలసిందిగా కోరుచున్నాము."
   },
-  "YAD-PHC-08|ACT001": {
-    "facility": "PHC Yadadri Bhuvanagiri 8",
-    "sku": "Artemether-Lumefantrine",
+  "YAD-PHC-01|IFA001": {
+    "facility": "PHC Pochampally",
+    "sku": "Iron Folic Acid",
     "district": "Yadadri Bhuvanagiri",
     "days_to_stockout": 11.8,
-    "english": "PHC Yadadri Bhuvanagiri 8 will run out of Artemether-Lumefantrine in 12 days. Current stock has fallen below the reorder point of 148 units due to a high daily burn rate of 9.12 units, which is exacerbated by the increased incidence of malaria during the peak monsoon season. Please initiate an immediate stock transfer of 206 units from PHC Nalgonda, located 66.5 km away, to prevent a service disruption.",
-    "telugu": "PHC యాదాద్రి భువనగిరి 8లో మరో 12 రోజుల్లో Artemether-Lumefantrine నిల్వలు అయిపోనున్నాయి. వర్షాకాలంలో మలేరియా కేసులు పెరగడం వల్ల రోజుకు 9.12 యూనిట్ల చొప్పున వినియోగం పెరిగి, ప్రస్తుతం ఉన్న నిల్వలు రీ-ఆర్డర్ పాయింట్ 148 యూనిట్ల కంటే తక్కువకు పడిపోయాయి. కావున, సేవలలో అంతరాయం కలగకుండా ఉండేందుకు, 66.5 కి.మీ దూరంలో ఉన్న PHC నల్గొండ నుండి వెంటనే 206 యూనిట్ల స్టాక్ బదిలీని ప్రారంభించవలసిందిగా కోరుచున్నాము."
+    "english": "PHC Pochampally will run out of Iron Folic Acid in 11 days. Current daily consumption of 99.87 units has already breached the reorder point of 1615 units, necessitating immediate replenishment to maintain supply levels. Please initiate an emergency transfer of stock from PHC Munugode located 43.4 km away.",
+    "telugu": "PHC పోచంపల్లిలో 11 రోజుల్లో Iron Folic Acid నిల్వలు అయిపోతాయి. ప్రస్తుతం రోజువారీ వినియోగం 99.87 యూనిట్లుగా ఉంది, ఇది ఇప్పటికే రీఆర్డర్ పాయింట్ 1615 యూనిట్లను దాటింది, కాబట్టి సరఫరాను కొనసాగించడానికి తక్షణమే నిల్వలను భర్తీ చేయాలి. దయచేసి 43.4 కి.మీ దూరంలో ఉన్న PHC మునుగోడు నుండి అత్యవసరంగా స్టాక్ బదిలీని ప్రారంభించండి."
   },
-  "YAD-PHC-07|AMX001": {
-    "facility": "PHC Yadadri Bhuvanagiri 7",
-    "sku": "Amoxicillin 500mg",
-    "district": "Yadadri Bhuvanagiri",
-    "days_to_stockout": 11.5,
-    "english": "PHC Yadadri Bhuvanagiri 7 will run out of Amoxicillin 500mg in 11.5 days. The current daily burn rate of 114.24 units has already fallen below the reorder point of 1799 units, necessitating immediate replenishment to maintain treatment capacity during the peak monsoon season. An emergency district indent is required to prevent a stockout before the next scheduled delivery.",
-    "telugu": "PHC యాదాద్రి భువనగిరి 7లో Amoxicillin 500mg స్టాక్ మరో 11.5 రోజుల్లో అయిపోతుంది. ప్రస్తుతం రోజుకు 114.24 యూనిట్ల చొప్పున వినియోగం జరుగుతోంది, ఇది రీ-ఆర్డర్ పాయింట్ 1799 యూనిట్ల కంటే తక్కువకు పడిపోయింది. వర్షాకాలంలో చికిత్సకు ఆటంకం కలగకుండా ఉండాలంటే వెంటనే స్టాక్ భర్తీ చేయాలి. తదుపరి షెడ్యూల్ డెలివరీకి ముందే స్టాక్ అయిపోకుండా నివారించడానికి అత్యవసరంగా డిస్ట్రిక్ట్ ఇండెంట్ అవసరం."
-  },
-  "NAL-PHC-10|AMX001": {
-    "facility": "PHC Nalgonda 10",
-    "sku": "Amoxicillin 500mg",
-    "district": "Nalgonda",
-    "days_to_stockout": 10.9,
-    "english": "PHC Nalgonda 10 will run out of Amoxicillin 500mg in 11 days. Current daily consumption of 150 units has breached the reorder point of 2300 units, and stock levels are insufficient to cover the lead time during the peak monsoon season. Please initiate an immediate inter-facility transfer of 2500 units from CHC Nalgonda 1 located 29.7 km away.",
-    "telugu": "PHC నల్గొండ 10లో Amoxicillin 500mg స్టాక్ మరో 11 రోజుల్లో అయిపోతుంది. ప్రస్తుతం రోజుకు 150 యూనిట్ల వినియోగం జరుగుతుండటంతో, రీ-ఆర్డర్ పాయింట్ 2300 యూనిట్ల కంటే తక్కువకు పడిపోయింది. వర్షాకాలం దృష్ట్యా, లీడ్ టైమ్ అవసరాలకు ప్రస్తుత స్టాక్ సరిపోదు. కావున, 29.7 కి.మీ దూరంలో ఉన్న CHC నల్గొండ 1 నుండి వెంటనే 2500 యూనిట్లను ఇంటర్-ఫెసిలిటీ బదిలీ (inter-facility transfer) చేయవలసిందిగా కోరుచున్నాము."
-  },
-  "YAD-PHC-04|ACT001": {
-    "facility": "PHC Yadadri Bhuvanagiri 4",
-    "sku": "Artemether-Lumefantrine",
-    "district": "Yadadri Bhuvanagiri",
-    "days_to_stockout": 10.7,
-    "english": "PHC Yadadri Bhuvanagiri 4 will run out of Artemether-Lumefantrine in 11 days. The current stock has fallen below the reorder point of 198 units due to a daily burn rate of 12.7 units, which is exacerbated by the peak monsoon season increasing the incidence of malaria. Please initiate an immediate transfer of 285 units from the surplus stock at PHC Nalgonda, located 67.5 km away, to prevent a service disruption.",
-    "telugu": "PHC యాదాద్రి భువనగిరి 4లో 11 రోజుల్లో Artemether-Lumefantrine నిల్వలు అయిపోనున్నాయి. రోజుకు 12.7 యూనిట్ల వినియోగం మరియు వర్షాకాలం కారణంగా మలేరియా కేసులు పెరగడం వల్ల, ప్రస్తుత నిల్వలు రీ-ఆర్డర్ పాయింట్ అయిన 198 యూనిట్ల కంటే తక్కువకు పడిపోయాయి. సేవలకు అంతరాయం కలగకుండా ఉండటానికి, 67.5 కి.మీ దూరంలో ఉన్న PHC నల్గొండలోని అదనపు నిల్వల నుండి 285 యూనిట్లను వెంటనే బదిలీ చేయవలసిందిగా కోరుచున్నాము."
-  },
-  "YAD-PHC-05|MET001": {
-    "facility": "PHC Yadadri Bhuvanagiri 5",
+  "YAD-PHC-07|MET001": {
+    "facility": "PHC Bibinagar",
     "sku": "Metformin 500mg",
     "district": "Yadadri Bhuvanagiri",
-    "days_to_stockout": 10.6,
-    "english": "PHC Yadadri Bhuvanagiri 5 will run out of Metformin 500mg in 10 days. The current daily burn rate of 177.8 units has already fallen below the reorder point of 2898 units, necessitating immediate replenishment to maintain chronic disease management during the monsoon period. Please initiate an emergency transfer of stock from CHC Yadadri Bhuvanagiri 2, located 21.3 km away, to cover the deficit.",
-    "telugu": "PHC యాదాద్రి భువనగిరి 5లో Metformin 500mg స్టాక్ మరో 10 రోజుల్లో అయిపోతుంది. ప్రస్తుతం రోజువారీ వినియోగం 177.8 యూనిట్లుగా ఉండగా, ఇది రీ-ఆర్డర్ పాయింట్ 2898 యూనిట్ల కంటే తక్కువకు పడిపోయింది. వర్షాకాలంలో దీర్ఘకాలిక వ్యాధుల నిర్వహణకు అంతరాయం కలగకుండా ఉండాలంటే వెంటనే స్టాక్ భర్తీ చేయాలి. కావున, 21.3 కి.మీ దూరంలో ఉన్న CHC యాదాద్రి భువనగిరి 2 నుండి అత్యవసరంగా స్టాక్ బదిలీని ప్రారంభించవలసిందిగా కోరుచున్నాము."
+    "days_to_stockout": 11.2,
+    "english": "PHC Bibinagar will run out of Metformin 500mg in 11 days. Current daily consumption of 282 units has already breached the reorder point of 4412 units, necessitating immediate replenishment to maintain chronic care during the monsoon period. Please initiate an emergency transfer of stock from PHC Nakrekal, located 53.4 km away, to cover the deficit.",
+    "telugu": "PHC బిబీనగర్‌లో Metformin 500mg స్టాక్ మరో 11 రోజుల్లో అయిపోతుంది. ప్రస్తుతం రోజుకు 282 యూనిట్ల వినియోగం జరుగుతుండటంతో, రీఆర్డర్ పాయింట్ 4412 యూనిట్ల కంటే తక్కువకు పడిపోయింది. వర్షాకాలంలో దీర్ఘకాలిక రోగులకు చికిత్స అందించడానికి వెంటనే స్టాక్ అవసరం. కాబట్టి, 53.4 కి.మీ దూరంలో ఉన్న PHC నకిరేకల్ నుండి అత్యవసరంగా స్టాక్ బదిలీని ప్రారంభించవలసిందిగా కోరుచున్నాము."
   },
-  "YAD-PHC-02|IFA001": {
-    "facility": "PHC Yadadri Bhuvanagiri 2",
-    "sku": "Iron Folic Acid",
-    "district": "Yadadri Bhuvanagiri",
-    "days_to_stockout": 10.5,
-    "english": "PHC Yadadri Bhuvanagiri 2 will run out of Iron Folic Acid in 10.5 days. The current daily burn rate of 97.75 units has fallen below the reorder point of 1580 units, necessitating immediate replenishment to maintain coverage during the peak monsoon season. Please initiate an emergency transfer of 905 units from PHC Yadadri Bhuvanagiri 6 located 26.6 km away.",
-    "telugu": "PHC యాదాద్రి భువనగిరి 2లో 10.5 రోజుల్లో Iron Folic Acid నిల్వలు అయిపోతాయి. ప్రస్తుతం రోజువారీ వినియోగం 97.75 యూనిట్లుగా ఉంది, ఇది రీఆర్డర్ పాయింట్ 1580 యూనిట్ల కంటే తక్కువకు పడిపోయింది. వర్షాకాలంలో నిల్వలు అందుబాటులో ఉంచడానికి తక్షణమే వీటిని భర్తీ చేయాలి. కావున, 26.6 కి.మీ దూరంలో ఉన్న PHC యాదాద్రి భువనగిరి 6 నుండి 905 యూనిట్లను అత్యవసరంగా బదిలీ చేయవలసిందిగా కోరుచున్నాము."
-  },
-  "YAD-CHC-02|AMX001": {
-    "facility": "CHC Yadadri Bhuvanagiri 2",
+  "YAD-PHC-08|AMX001": {
+    "facility": "PHC Addagudur",
     "sku": "Amoxicillin 500mg",
     "district": "Yadadri Bhuvanagiri",
-    "days_to_stockout": 0.0,
-    "english": "CHC Yadadri Bhuvanagiri 2 has completely exhausted its stock of Amoxicillin 500mg and will remain at zero units until resupply. The daily burn rate of 379.21 units has significantly breached the reorder point of 5509 units, necessitating immediate replenishment to manage respiratory infections exacerbated by the peak monsoon season. An emergency district indent is required immediately to restore essential stock levels.",
-    "telugu": "CHC యాదాద్రి భువనగిరి 2లో Amoxicillin 500mg నిల్వలు పూర్తిగా అయిపోయాయి మరియు కొత్త స్టాక్ వచ్చే వరకు సున్నా యూనిట్లుగా ఉంటాయి. రోజువారీ వినియోగం 379.21 యూనిట్లుగా ఉండటం వల్ల, 5509 యూనిట్ల రీఆర్డర్ పాయింట్‌ను ఇప్పటికే దాటిపోయింది. వర్షాకాలం కారణంగా పెరుగుతున్న శ్వాసకోశ ఇన్ఫెక్షన్లను అదుపు చేయడానికి తక్షణమే స్టాక్ అవసరం. కావున, అత్యవసరంగా జిల్లా ఇండెంట్ ద్వారా స్టాక్‌ను పునరుద్ధరించవలసిందిగా కోరుచున్నాము."
+    "days_to_stockout": 10.9,
+    "english": "PHC Addagudur will run out of Amoxicillin 500mg in 11 days. Current daily consumption of 125.76 units has breached the reorder point of 1974 units, and demand is further exacerbated by the peak monsoon season increasing the prevalence of respiratory infections. Please initiate an immediate stock transfer of 5000 units from CHC Narketpally, located 32.9 km away, to replenish the facility.",
+    "telugu": "PHC అడ్డగూడూరులో 11 రోజుల్లో Amoxicillin 500mg నిల్వలు అయిపోనున్నాయి. ప్రస్తుతం రోజుకు 125.76 యూనిట్ల వినియోగం జరుగుతుండటంతో, రీఆర్డర్ పాయింట్ అయిన 1974 యూనిట్ల స్థాయిని దాటింది. వర్షాకాలం కారణంగా శ్వాసకోశ ఇన్ఫెక్షన్లు పెరిగి, మందుల అవసరం మరింత పెరిగింది. కావున, 32.9 కి.మీ దూరంలో ఉన్న CHC నార్కెట్‌పల్లి నుండి వెంటనే 5000 యూనిట్ల Amoxicillin 500mg నిల్వలను మా కేంద్రానికి బదిలీ చేయవలసిందిగా కోరుచున్నాము."
   },
   "YAD-PHC-08|MET001": {
-    "facility": "PHC Yadadri Bhuvanagiri 8",
+    "facility": "PHC Addagudur",
     "sku": "Metformin 500mg",
     "district": "Yadadri Bhuvanagiri",
-    "days_to_stockout": 0.0,
-    "english": "PHC Yadadri Bhuvanagiri 8 will be completely out of Metformin 500mg in 0 days. The daily burn rate of 170.53 units has already breached the reorder point of 2796 units, and while this is not a monsoon-specific medicine, current supply chain disruptions are exacerbated by the peak monsoon season. Please initiate an immediate transfer of 2796 units from the surplus stock at CHC Yadadri Bhuvanagiri 2 located 18.4 km away.",
-    "telugu": "PHC యాదాద్రి భువనగిరి 8లో Metformin 500mg నిల్వలు 0 రోజుల్లో పూర్తిగా అయిపోనున్నాయి. రోజువారీ వినియోగం 170.53 యూనిట్లు ఉండటంతో, ఇది ఇప్పటికే రీఆర్డర్ పాయింట్ 2796 యూనిట్లను దాటిపోయింది. ఇది వర్షాకాలానికి సంబంధించిన మందు కాకపోయినప్పటికీ, ప్రస్తుత వర్షాకాలం వల్ల సరఫరా వ్యవస్థకు అంతరాయం ఏర్పడింది. కావున, 18.4 కి.మీ దూరంలో ఉన్న CHC యాదాద్రి భువనగిరి 2 లోని అదనపు నిల్వల నుండి 2796 యూనిట్లను వెంటనే బదిలీ చేయవలసిందిగా కోరుచున్నాము."
+    "days_to_stockout": 10.7,
+    "english": "PHC Addagudur will run out of Metformin 500mg in 10.7 days. The current daily burn rate of 283.85 units has already breached the reorder point of 4435 units, necessitating immediate replenishment to maintain chronic care services during the monsoon season. Please initiate an emergency transfer of stock from CHC Narketpally, located 32.9 km away, which currently holds 33009 surplus units.",
+    "telugu": "PHC అడ్డగూడూరులో Metformin 500mg స్టాక్ మరో 10.7 రోజుల్లో అయిపోతుంది. ప్రస్తుతం రోజుకు 283.85 యూనిట్ల చొప్పున వినియోగం జరుగుతోంది, ఇది ఇప్పటికే రీఆర్డర్ పాయింట్ (4435 యూనిట్లు) దాటిపోయింది. వర్షాకాలంలో దీర్ఘకాలిక వైద్య సేవలకు అంతరాయం కలగకుండా ఉండాలంటే వెంటనే స్టాక్ భర్తీ చేయాలి. కావున, 32.9 కి.మీ దూరంలో ఉన్న CHC నార్కెట్‌పల్లిలో ప్రస్తుతం 33009 యూనిట్ల అదనపు స్టాక్ ఉంది, అక్కడి నుండి అత్యవసరంగా స్టాక్ బదిలీని ప్రారంభించవలసిందిగా కోరుచున్నాము."
   },
-  "YAD-PHC-01|ZNC001": {
-    "facility": "PHC Yadadri Bhuvanagiri 1",
-    "sku": "Zinc Sulphate 20mg",
+  "YAD-PHC-05|IFA001": {
+    "facility": "PHC Mothkur",
+    "sku": "Iron Folic Acid",
     "district": "Yadadri Bhuvanagiri",
-    "days_to_stockout": 0.0,
-    "english": "PHC Yadadri Bhuvanagiri 1 will be completely out of Zinc Sulphate 20mg immediately. The current daily burn rate of 160.95 units has already breached the reorder point of 2586 units, and the ongoing monsoon season is driving a critical surge in diarrheal cases requiring this medication. An emergency district indent is required to replenish stock levels immediately.",
-    "telugu": "PHC యాదాద్రి భువనగిరి 1లో Zinc Sulphate 20mg నిల్వలు వెంటనే పూర్తిగా అయిపోనున్నాయి. ప్రస్తుతం రోజుకు 160.95 యూనిట్ల చొప్పున వినియోగం జరుగుతుండటంతో, రీఆర్డర్ పాయింట్ అయిన 2586 యూనిట్ల పరిమితిని ఇప్పటికే దాటేశాము. ప్రస్తుతం వర్షాకాలం కావడంతో డయేరియా కేసులు విపరీతంగా పెరుగుతున్నాయి, దీనివల్ల ఈ మందు అత్యవసరంగా అవసరమవుతోంది. స్టాక్ నిల్వలను వెంటనే భర్తీ చేయడానికి జిల్లా స్థాయి నుండి అత్యవసర ఇండెంట్ (emergency indent) అవసరం."
+    "days_to_stockout": 10.2,
+    "english": "PHC Mothkur will run out of Iron Folic Acid in 10 days. Current consumption of 109.5 units per day has breached the reorder point of 1750 units, necessitating immediate replenishment to maintain supply during the peak monsoon season. Please initiate an urgent stock transfer of the required units from PHC Addagudur, located 7.5 km away.",
+    "telugu": "PHC మోత్కూరులో 10 రోజుల్లో Iron Folic Acid నిల్వలు అయిపోతాయి. ప్రస్తుతం రోజుకు 109.5 యూనిట్ల వినియోగం జరుగుతుండటంతో, రీఆర్డర్ పాయింట్ 1750 యూనిట్లను దాటింది. వర్షాకాలంలో సరఫరాకు అంతరాయం కలగకుండా ఉండాలంటే వెంటనే నిల్వలను భర్తీ చేయాలి. కావున, 7.5 కి.మీ దూరంలో ఉన్న PHC అడ్డగూడూరు నుండి అవసరమైన యూనిట్లను తక్షణమే స్టాక్ బదిలీ చేయవలసిందిగా కోరుచున్నాము."
   },
-  "YAD-PHC-07|ORS001": {
-    "facility": "PHC Yadadri Bhuvanagiri 7",
-    "sku": "ORS Sachet (WHO formula)",
+  "YAD-CHC-01|PAR001": {
+    "facility": "CHC Bhongir",
+    "sku": "Paracetamol 500mg",
     "district": "Yadadri Bhuvanagiri",
-    "days_to_stockout": 0.0,
-    "english": "PHC Yadadri Bhuvanagiri 7 will run out of ORS sachets immediately as current stock is zero. The daily burn rate of 129 units has breached the reorder point of 2022 units, and replenishment is critical to manage the surge in diarrheal cases during the peak monsoon season. An emergency district indent is required to restock this facility immediately.",
-    "telugu": "PHC యాదాద్రి భువనగిరి 7లో ప్రస్తుతం ORS sachets నిల్వ సున్నాగా ఉంది, కాబట్టి అవి వెంటనే అయిపోతాయి. రోజువారీ వినియోగం 129 యూనిట్లుగా ఉండటంతో, ఇది 2022 యూనిట్ల రీఆర్డర్ పాయింట్‌ను దాటిపోయింది. వర్షాకాలంలో విరేచనాల కేసులు పెరుగుతున్నందున, రోగుల అవసరాల కోసం వీటిని వెంటనే భర్తీ చేయడం చాలా ముఖ్యం. ఈ కేంద్రానికి తక్షణమే స్టాక్ పంపడానికి ఎమర్జెన్సీ డిస్ట్రిక్ట్ ఇండెంట్ అవసరం."
-  },
-  "YAD-PHC-06|ORS001": {
-    "facility": "PHC Yadadri Bhuvanagiri 6",
-    "sku": "ORS Sachet (WHO formula)",
-    "district": "Yadadri Bhuvanagiri",
-    "days_to_stockout": 0.0,
-    "english": "PHC Yadadri Bhuvanagiri 6 has completely exhausted its stock of ORS sachets and will remain without supply for the next fourteen days. The daily burn rate of 125.1 units has significantly breached the reorder point of 1962 units, creating a critical shortage for managing dehydration during the peak monsoon season. An emergency district indent is required immediately to replenish these essential supplies.",
-    "telugu": "PHC యాదాద్రి భువనగిరి 6లో ORS సాచెట్ల నిల్వ పూర్తిగా అయిపోయింది మరియు రాబోయే పద్నాలుగు రోజుల వరకు సరఫరా ఉండదు. రోజువారీ వినియోగం 125.1 యూనిట్లుగా ఉండటంతో, ఇది రీఆర్డర్ పాయింట్ 1962 యూనిట్లను దాటిపోయింది, దీనివల్ల వర్షాకాలంలో డీహైడ్రేషన్ నిర్వహణకు తీవ్ర కొరత ఏర్పడింది. ఈ అత్యవసర మందులను వెంటనే భర్తీ చేయడానికి జిల్లా స్థాయి నుండి అత్యవసర ఇండెంట్ అవసరం."
-  },
-  "YAD-PHC-06|AMX001": {
-    "facility": "PHC Yadadri Bhuvanagiri 6",
-    "sku": "Amoxicillin 500mg",
-    "district": "Yadadri Bhuvanagiri",
-    "days_to_stockout": 0.0,
-    "english": "PHC Yadadri Bhuvanagiri 6 has completely exhausted its stock of Amoxicillin 500mg. The daily burn rate of 119.4 units has far exceeded the reorder point of 1871 units, and the current monsoon season necessitates immediate replenishment to manage the surge in secondary bacterial infections. An emergency district indent is required to restock this facility immediately.",
-    "telugu": "PHC యాదాద్రి భువనగిరి 6లో Amoxicillin 500mg నిల్వలు పూర్తిగా అయిపోయాయి. రోజువారీ వినియోగం 119.4 యూనిట్లుగా ఉండటం వల్ల, 1871 యూనిట్ల రీఆర్డర్ పాయింట్‌ను ఇది ఎప్పుడో దాటిపోయింది. ప్రస్తుతం వర్షాకాలం కావడంతో సెకండరీ బ్యాక్టీరియల్ ఇన్ఫెక్షన్లు పెరిగే అవకాశం ఉంది, కాబట్టి వెంటనే మందుల సరఫరా అవసరం. ఈ కేంద్రానికి తక్షణమే మందులను నింపడానికి ఎమర్జెన్సీ డిస్ట్రిక్ట్ ఇండెంట్ అవసరం."
-  },
-  "YAD-PHC-01|AMX001": {
-    "facility": "PHC Yadadri Bhuvanagiri 1",
-    "sku": "Amoxicillin 500mg",
-    "district": "Yadadri Bhuvanagiri",
-    "days_to_stockout": 0.0,
-    "english": "PHC Yadadri Bhuvanagiri 1 has completely exhausted its stock of Amoxicillin 500mg. The facility reached zero stock because the daily burn rate of 84.22 units significantly exceeded the reorder point of 1379 units, exacerbated by increased respiratory infection cases during the peak monsoon season. An emergency district indent is required immediately to replenish the supply.",
-    "telugu": "PHC యాదాద్రి భువనగిరి 1లో Amoxicillin 500mg నిల్వలు పూర్తిగా అయిపోయాయి. వర్షాకాలంలో శ్వాసకోశ ఇన్ఫెక్షన్ల కేసులు పెరగడం వల్ల, రోజువారీ వినియోగం 84.22 యూనిట్లుగా ఉండి, రీఆర్డర్ పాయింట్ 1379 యూనిట్లను మించిపోవడంతో ఈ పరిస్థితి తలెత్తింది. కావున, తక్షణమే మందుల సరఫరా కోసం ఎమర్జెన్సీ డిస్ట్రిక్ట్ ఇండెంట్ అవసరం."
+    "days_to_stockout": 9.8,
+    "english": "CHC Bhongir will deplete its stock of Paracetamol 500mg in 9 days. Current daily consumption of 318 units has breached the reorder point of 4590 units, and demand is intensified by the peak monsoon season. Please initiate an immediate transfer of stock from CHC Narketpally located 61.8 km away to replenish the facility.",
+    "telugu": "CHC భువనగిరిలో Paracetamol 500mg నిల్వలు మరో 9 రోజుల్లో అయిపోనున్నాయి. ప్రస్తుతం రోజుకు 318 యూనిట్ల వినియోగంతో, రీఆర్డర్ పాయింట్ అయిన 4590 యూనిట్ల స్థాయిని దాటింది. వర్షాకాలం కారణంగా డిమాండ్ మరింత పెరిగింది. కావున, 61.8 కి.మీ దూరంలో ఉన్న CHC నార్కెట్‌పల్లి నుండి వెంటనే స్టాక్‌ను బదిలీ చేసి, నిల్వలను భర్తీ చేయవలసిందిగా కోరుచున్నాము."
   },
   "YAD-CHC-01|ZNC001": {
-    "facility": "CHC Yadadri Bhuvanagiri 1",
+    "facility": "CHC Bhongir",
     "sku": "Zinc Sulphate 20mg",
     "district": "Yadadri Bhuvanagiri",
     "days_to_stockout": 0.0,
-    "english": "CHC Yadadri Bhuvanagiri 1 will run out of Zinc Sulphate 20mg immediately. The daily burn rate of 42.88 units has already breached the reorder point of 933 units, and the current monsoon season has significantly increased the demand for this essential diarrheal treatment. Please initiate an emergency transfer of 2,000 units from PHC Nalgonda 2, located 61.0 km away, to restore stock levels.",
-    "telugu": "CHC యాదాద్రి భువనగిరి 1లో Zinc Sulphate 20mg నిల్వలు వెంటనే అయిపోనున్నాయి. రోజువారీ వినియోగం 42.88 యూనిట్లుగా ఉండటంతో, ఇది ఇప్పటికే 933 యూనిట్ల రీఆర్డర్ పాయింట్‌ను దాటిపోయింది. ప్రస్తుతం ఉన్న వర్షాకాలం కారణంగా ఈ డయేరియా చికిత్సకు డిమాండ్ గణనీయంగా పెరిగింది. కావున, స్టాక్ స్థాయిలను పునరుద్ధరించడానికి 61.0 కి.మీ దూరంలో ఉన్న PHC నల్గొండ 2 నుండి 2,000 యూనిట్లను అత్యవసరంగా బదిలీ చేయవలసిందిగా కోరుచున్నాము."
+    "english": "CHC Bhongir has completely exhausted its stock of Zinc Sulphate 20mg and requires immediate replenishment. The daily burn rate of 46.61 units has long since breached the reorder point of 975 units, and current monsoon conditions have significantly increased the clinical demand for this essential diarrhea treatment. Please facilitate an emergency transfer of 2403 units from PHC Kattangur, located 56.5 km away, to restore facility inventory.",
+    "telugu": "CHC భువనగిరిలో Zinc Sulphate 20mg నిల్వలు పూర్తిగా అయిపోయాయి, కావున వెంటనే సరఫరా చేయవలసిందిగా కోరుచున్నాము. రోజువారీ వినియోగం 46.61 యూనిట్లు ఉండటంతో, రీఆర్డర్ పాయింట్ 975 యూనిట్లను ఇప్పటికే దాటిపోయింది. ప్రస్తుతం ఉన్న వర్షాకాల పరిస్థితుల దృష్ట్యా, డయేరియా చికిత్సకు అవసరమైన ఈ మందుల డిమాండ్ గణనీయంగా పెరిగింది. కావున, 56.5 కి.మీ దూరంలో ఉన్న PHC కట్టంగూర్ నుండి 2403 యూనిట్లను అత్యవసరంగా బదిలీ చేసి, మా స్టాక్‌ను పునరుద్ధరించవలసిందిగా కోరుచున్నాము."
+  },
+  "YAD-PHC-01|CIP001": {
+    "facility": "PHC Pochampally",
+    "sku": "Ciprofloxacin 500mg",
+    "district": "Yadadri Bhuvanagiri",
+    "days_to_stockout": 9.7,
+    "english": "PHC Pochampally will run out of Ciprofloxacin 500mg in 9.7 days. The current stock has fallen below the reorder point of 31 units while the daily burn rate remains high due to the increased prevalence of waterborne infections during the peak monsoon season. Please initiate an immediate transfer of 82 units from PHC Munugode, located 43.4 km away, to replenish the facility.",
+    "telugu": "PHC పోచంపల్లిలో Ciprofloxacin 500mg నిల్వలు మరో 9.7 రోజుల్లో అయిపోనున్నాయి. వర్షాకాలం కావడంతో నీటి ద్వారా సంక్రమించే వ్యాధులు పెరిగి, మందుల వినియోగం ఎక్కువగా ఉండటంతో, ప్రస్తుతం ఉన్న నిల్వలు రీ-ఆర్డర్ పాయింట్ అయిన 31 యూనిట్ల కంటే తక్కువకు పడిపోయాయి. కావున, 43.4 కి.మీ దూరంలో ఉన్న PHC మునుగోడు నుండి వెంటనే 82 యూనిట్లను ఈ కేంద్రానికి బదిలీ చేయవలసిందిగా కోరుచున్నాము."
+  },
+  "YAD-PHC-03|CIP001": {
+    "facility": "PHC Yadagirigutta",
+    "sku": "Ciprofloxacin 500mg",
+    "district": "Yadadri Bhuvanagiri",
+    "days_to_stockout": 9.5,
+    "english": "PHC Yadagirigutta will run out of Ciprofloxacin 500mg in 9.5 days. Current stock has fallen below the reorder point of 33 units while the daily burn rate remains high due to the increased prevalence of waterborne infections during the peak monsoon season. Please initiate an immediate transfer of 300 units from the surplus stock at CHC Narketpally, located 66.5 km away, to replenish the facility.",
+    "telugu": "PHC యాదగిరిగుట్టలో Ciprofloxacin 500mg స్టాక్ మరో 9.5 రోజుల్లో అయిపోతుంది. ప్రస్తుతం ఉన్న స్టాక్ రీ-ఆర్డర్ పాయింట్ 33 యూనిట్ల కంటే తక్కువకు పడిపోయింది, అదే సమయంలో వర్షాకాలం కావడంతో నీటి ద్వారా సంక్రమించే వ్యాధులు పెరిగి, మందుల వినియోగం ఎక్కువగా ఉంది. కావున, CHC నార్కెట్‌పల్లిలో అదనంగా ఉన్న స్టాక్ నుండి 300 యూనిట్లను వెంటనే మన PHCకి బదిలీ చేయవలసిందిగా కోరుచున్నాము."
+  },
+  "YAD-CHC-02|MET001": {
+    "facility": "CHC Choutuppal",
+    "sku": "Metformin 500mg",
+    "district": "Yadadri Bhuvanagiri",
+    "days_to_stockout": 9.2,
+    "english": "CHC Choutuppal will run out of Metformin 500mg in 9 days. The current stock has fallen below the reorder point of 13,976 units, and the daily burn rate of 965 units necessitates immediate replenishment to maintain chronic disease management during the monsoon period. Please initiate an emergency transfer of 7,524 units from PHC Nakrekal, located 22.7 km away, to stabilize inventory levels.",
+    "telugu": "CHC చౌటుప్పల్‌లో Metformin 500mg స్టాక్ మరో 9 రోజుల్లో అయిపోతుంది. ప్రస్తుత స్టాక్ రీ-ఆర్డర్ పాయింట్ అయిన 13,976 యూనిట్ల కంటే తగ్గింది. రోజువారీ వినియోగం 965 యూనిట్లుగా ఉన్నందున, వర్షాకాలంలో దీర్ఘకాలిక వ్యాధుల చికిత్సకు అంతరాయం కలగకుండా వెంటనే స్టాక్ భర్తీ చేయాలి. కావున, 22.7 కి.మీ దూరంలో ఉన్న PHC నకిరేకల్ నుండి 7,524 యూనిట్లను అత్యవసరంగా బదిలీ చేయవలసిందిగా కోరుచున్నాము."
+  },
+  "YAD-CHC-02|AMX001": {
+    "facility": "CHC Choutuppal",
+    "sku": "Amoxicillin 500mg",
+    "district": "Yadadri Bhuvanagiri",
+    "days_to_stockout": 0.0,
+    "english": "CHC Choutuppal has completely exhausted its stock of Amoxicillin 500mg and requires immediate replenishment. The facility reached its reorder point of 7594 units several days ago while maintaining a high daily burn rate of 527 units, necessitating urgent stock to manage secondary bacterial infections common during this peak monsoon season. Please initiate an emergency district indent to secure additional supplies, as the 1397 surplus units available at PHC Kattangur, 24.9 km away, are insufficient to meet the current demand.",
+    "telugu": "CHC చౌటుప్పల్‌లో Amoxicillin 500mg స్టాక్ పూర్తిగా అయిపోయింది, కావున వెంటనే కొత్త స్టాక్ అవసరం. ఈ కేంద్రంలో రీ-ఆర్డర్ పాయింట్ 7594 యూనిట్లు ఉండగా, రోజుకు 527 యూనిట్ల చొప్పున వినియోగం జరుగుతోంది. ప్రస్తుతం వర్షాకాలం కావడంతో సెకండరీ బ్యాక్టీరియల్ ఇన్ఫెక్షన్ల చికిత్స కోసం అత్యవసరంగా మందులు అవసరం. 24.9 కి.మీ దూరంలో ఉన్న PHC కట్టంగూర్‌లో కేవలం 1397 యూనిట్లు మాత్రమే అదనంగా ఉన్నాయి, ఇవి ప్రస్తుత అవసరాలకు సరిపోవు. కావున, అదనపు స్టాక్ కోసం వెంటనే ఎమర్జెన్సీ డిస్ట్రిక్ట్ ఇండెంట్‌ను ప్రారంభించవలసిందిగా కోరుచున్నాము."
+  },
+  "YAD-PHC-02|ORS001": {
+    "facility": "PHC Valigonda",
+    "sku": "ORS Sachet (WHO formula)",
+    "district": "Yadadri Bhuvanagiri",
+    "days_to_stockout": 0.0,
+    "english": "PHC Valigonda has completely exhausted its stock of ORS sachets and is currently at zero units. The daily burn rate of 99.39 units has breached the reorder point of 1610 units, and immediate replenishment is critical to manage the surge in monsoon-related diarrheal cases. Please initiate an emergency transfer of 7794 units from CHC Narketpally, located 34.4 km away, to restore supply levels.",
+    "telugu": "PHC వలిగొండలో ORS సాచెట్ల నిల్వలు పూర్తిగా అయిపోయాయి, ప్రస్తుతం సున్నా యూనిట్లు ఉన్నాయి. రోజువారీ వినియోగం 99.39 యూనిట్లుగా ఉండటంతో, ఇది రీఆర్డర్ పాయింట్ 1610 యూనిట్లను దాటిపోయింది. వర్షాకాలం కారణంగా పెరుగుతున్న డయేరియా కేసులను నిర్వహించడానికి తక్షణమే నిల్వలు అవసరం. కావున, 34.4 కి.మీ దూరంలో ఉన్న CHC నార్కెట్‌పల్లి నుండి 7794 యూనిట్లను అత్యవసరంగా బదిలీ చేయవలసిందిగా కోరుచున్నాము."
+  },
+  "YAD-PHC-01|ORS001": {
+    "facility": "PHC Pochampally",
+    "sku": "ORS Sachet (WHO formula)",
+    "district": "Yadadri Bhuvanagiri",
+    "days_to_stockout": 0.0,
+    "english": "PHC Pochampally is currently out of ORS sachets and faces an immediate supply gap. The daily burn rate of 88.57 units has long since breached the reorder point of 1459 units, and the current monsoon season has significantly increased the demand for this essential diarrheal treatment. Please arrange for an emergency transfer of 2799 units from the surplus stock at PHC Munugode, located 43.4 km away.",
+    "telugu": "PHC పోచంపల్లిలో ప్రస్తుతం ORS సాచెట్లు నిల్వ లేవు మరియు తక్షణ సరఫరా కొరత ఏర్పడింది. రోజువారీ వినియోగం 88.57 యూనిట్లు ఉండటంతో, 1459 యూనిట్ల రీ-ఆర్డర్ పాయింట్‌ను ఇప్పటికే దాటిపోయింది. ప్రస్తుతం వర్షాకాలం కావడంతో ఈ డయేరియా చికిత్సకు డిమాండ్ గణనీయంగా పెరిగింది. కావున, 43.4 కి.మీ దూరంలో ఉన్న PHC మునుగోడులోని అదనపు నిల్వల నుండి 2799 యూనిట్లను అత్యవసరంగా బదిలీ చేయవలసిందిగా కోరుచున్నాము."
+  },
+  "YAD-CHC-02|ZNC001": {
+    "facility": "CHC Choutuppal",
+    "sku": "Zinc Sulphate 20mg",
+    "district": "Yadadri Bhuvanagiri",
+    "days_to_stockout": 0.0,
+    "english": "CHC Choutuppal is currently out of stock of Zinc Sulphate 20mg and requires immediate replenishment. The daily burn rate of 82.44 units has exhausted the reorder point of 1477 units, and the current monsoon season has significantly increased the demand for this essential treatment for diarrheal diseases. Please arrange for an emergency transfer of stock from PHC Nakrekal, located 22.7 km away, which currently holds a surplus of 2928 units.",
+    "telugu": "CHC చౌటుప్పల్‌లో ప్రస్తుతం Zinc Sulphate 20mg నిల్వలు అయిపోయాయి, కావున వెంటనే వీటిని సరఫరా చేయవలసిందిగా కోరుచున్నాము. రోజువారీ వినియోగం 82.44 యూనిట్లు ఉండటంతో, 1477 యూనిట్ల రీఆర్డర్ పాయింట్ ఇప్పటికే పూర్తయింది. ప్రస్తుతం వర్షాకాలం కావడంతో డయేరియా వ్యాధుల చికిత్సకు ఈ మందుల అవసరం బాగా పెరిగింది. కావున, 22.7 కి.మీ దూరంలో ఉన్న PHC నకిరేకల్‌లో ప్రస్తుతం 2928 యూనిట్ల అదనపు నిల్వలు ఉన్నందున, అక్కడి నుండి అత్యవసరంగా స్టాక్ బదిలీని ఏర్పాటు చేయవలసిందిగా కోరుచున్నాము."
+  },
+  "YAD-CHC-02|PAR001": {
+    "facility": "CHC Choutuppal",
+    "sku": "Paracetamol 500mg",
+    "district": "Yadadri Bhuvanagiri",
+    "days_to_stockout": 0.0,
+    "english": "CHC Choutuppal has completely exhausted its stock of Paracetamol 500mg and requires immediate replenishment. The facility reached its reorder point of 1024 units well before the current stockout, and the ongoing monsoon season has significantly increased the demand for fever management medications. Please arrange for an emergency transfer of 1330 units from PHC Nakrekal, located 22.7 km away, to restore essential service levels.",
+    "telugu": "CHC చౌటుప్పల్‌లో Paracetamol 500mg నిల్వలు పూర్తిగా అయిపోయాయి, కావున వెంటనే సరఫరా చేయవలసిందిగా కోరుచున్నాము. ప్రస్తుత నిల్వలు అయిపోకముందే, రీ-ఆర్డర్ పాయింట్ అయిన 1024 యూనిట్లకు చేరుకున్నాము. ప్రస్తుతం వర్షాకాలం కావడంతో జ్వరం కోసం వాడే మందులకు డిమాండ్ గణనీయంగా పెరిగింది. కావున, అత్యవసర సేవలను పునరుద్ధరించడానికి, 22.7 కి.మీ దూరంలో ఉన్న PHC నకిరేకల్ నుండి 1330 యూనిట్లను అత్యవసరంగా బదిలీ చేయవలసిందిగా కోరుచున్నాము."
+  },
+  "YAD-PHC-07|PAR001": {
+    "facility": "PHC Bibinagar",
+    "sku": "Paracetamol 500mg",
+    "district": "Yadadri Bhuvanagiri",
+    "days_to_stockout": 0.0,
+    "english": "PHC Bibinagar has completely exhausted its stock of Paracetamol 500mg and requires immediate replenishment. The current depletion is critical as the daily burn rate has consistently exceeded the reorder point of 974 units, further exacerbated by the high demand for fever management during the peak monsoon season. Please arrange for an urgent transfer of 1257 units from the surplus stock at PHC Munugode, located 56.9 km away.",
+    "telugu": "PHC Bibinagar లో Paracetamol 500mg నిల్వలు పూర్తిగా అయిపోయాయి, కావున వెంటనే కొత్త స్టాక్ అవసరం. వర్షాకాలం కావడంతో జ్వరం కేసుల సంఖ్య పెరిగి, రోజువారీ వినియోగం రీ-ఆర్డర్ పాయింట్ (974 యూనిట్లు) కంటే ఎక్కువగా ఉండటంతో పరిస్థితి క్లిష్టంగా ఉంది. కావున, 56.9 కి.మీ దూరంలో ఉన్న PHC Munugode లోని అదనపు నిల్వల నుండి 1257 యూనిట్లను అత్యవసరంగా తరలించవలసిందిగా కోరుచున్నాము."
+  },
+  "YAD-PHC-07|AMX001": {
+    "facility": "PHC Bibinagar",
+    "sku": "Amoxicillin 500mg",
+    "district": "Yadadri Bhuvanagiri",
+    "days_to_stockout": 0.0,
+    "english": "PHC Bibinagar has completely exhausted its stock of Amoxicillin 500mg and will remain without supply for the next fourteen days. The facility reached its reorder point of 1048 units while consuming 59.62 units daily, and the current monsoon season has significantly increased the risk of secondary bacterial infections requiring this antibiotic. Please facilitate an immediate emergency transfer of 10277 units from the surplus stock at CHC Narketpally, located 60.6 km away.",
+    "telugu": "PHC బిబీనగర్‌లో Amoxicillin 500mg నిల్వలు పూర్తిగా అయిపోయాయి మరియు రాబోయే పద్నాలుగు రోజుల వరకు సరఫరా అందుబాటులో ఉండదు. రోజుకు 59.62 యూనిట్ల వినియోగంతో, ఈ కేంద్రం 1048 యూనిట్ల రీ-ఆర్డర్ పాయింట్‌కు చేరుకుంది. ప్రస్తుతం ఉన్న వర్షాకాలం కారణంగా సెకండరీ బ్యాక్టీరియల్ ఇన్ఫెక్షన్ల ముప్పు పెరిగింది, దీనికి ఈ యాంటీబయాటిక్ అత్యవసరం. కావున, 60.6 కి.మీ దూరంలో ఉన్న CHC నార్కెట్‌పల్లిలోని అదనపు నిల్వల నుండి 10277 యూనిట్లను తక్షణమే అత్యవసర బదిలీ చేయవలసిందిగా కోరుచున్నాము."
   }
 }

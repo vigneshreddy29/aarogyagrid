@@ -3,24 +3,24 @@
     "node":"Telangana (data-rich)",
     "train_rows":6780,
     "local_weight":0.77,
-    "local_mape":9.5,
-    "federated_mape":9.48,
-    "improvement_%":0.2
+    "local_mape":9.11,
+    "federated_mape":9.08,
+    "improvement_%":0.3
   },
   {
     "node":"Odisha (moderate)",
     "train_rows":2532,
     "local_weight":0.56,
-    "local_mape":10.69,
-    "federated_mape":10.05,
-    "improvement_%":6.0
+    "local_mape":12.96,
+    "federated_mape":12.45,
+    "improvement_%":3.9
   },
   {
     "node":"Meghalaya (data-poor)",
     "train_rows":310,
     "local_weight":0.13,
-    "local_mape":23.78,
-    "federated_mape":19.04,
-    "improvement_%":19.9
+    "local_mape":19.45,
+    "federated_mape":17.45,
+    "improvement_%":10.3
   }
 ]

@@ -301,6 +301,13 @@ div[data-testid="stTabs"] [data-baseweb="tab-border"] {
   display: none !important;
   height: 0 !important;
 }
+div[data-baseweb="select"] > div {
+  background: linear-gradient(158deg, #1A2336, #131A2A) !important;
+  border: 1px solid #34426A !important;
+  border-radius: 9px !important;
+  min-height: 42px !important;
+}
+div[data-baseweb="select"] svg { fill: #5B8DEF !important; }
 </style>
 """
 

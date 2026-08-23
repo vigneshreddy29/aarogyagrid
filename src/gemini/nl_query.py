@@ -273,8 +273,9 @@ calibrated against 218 IDSP outbreak reports via the EpiClim dataset.
 Stock levels, footfall, beds and staffing are synthesised from those real
 anchors — no public API exposes live PHC inventory in India.
 
-Answer in 2-3 sentences. If the question is outside these facts, say the
-system does not cover it."""
+Answer in 2-3 sentences. Include a specific number from the facts above where
+one fits. If the question is outside these facts, say the system does not
+cover it."""
 
 
 def route(question):
@@ -329,3 +330,24 @@ def advise(question, ctx):
 def explain(question):
     return ask(f"Question: {question}", system=EXPLAIN_FACTS,
                temperature=0.2) or ""
+
+# ================================================================ languages
+
+LANGUAGES = {
+    "English": None,
+    "తెలుగు (Telugu)": "Telugu",
+    "हिन्दी (Hindi)": "Hindi",
+}
+
+
+def translate(text, language):
+    """Translate a briefing, keeping medicine and facility names in English."""
+    if not language or not text:
+        return text
+    out = ask(
+        f"Translate this health-supply briefing into {language} for a PHC "
+        f"pharmacist. Keep medicine names, facility names and numbers exactly "
+        f"as they appear in English — they must match the packaging and the "
+        f"stock register. Return only the translation, nothing else.\n\n{text}",
+        temperature=0.1)
+    return out or text

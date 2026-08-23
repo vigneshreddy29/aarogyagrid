@@ -8,7 +8,8 @@ import plotly.express as px
 import plotly.graph_objects as go
 import style
 
-from src.gemini.nl_query import run as nl_run, summarise
+from src.gemini.nl_query import (run as nl_run, summarise,
+                                 route, situation, advise, explain)
 
 st.set_page_config(page_title="AarogyaGrid", page_icon="🏥", layout="wide")
 style.apply(st)
@@ -78,52 +79,109 @@ style.ribbon(st, w.facility_name, int(w.score), w.band,
              w.primary_risk, w.days_to_next_stockout, w.district)
 
 # ---------------------------------------------------------------- NL query
-with st.expander("🔍 **Ask a question** — natural language search across all facilities",
-                 expanded=False):
-    st.caption("Gemini translates your question into a query over the facility "
-               "data. Try: *understaffed facilities in Yadadri running out of "
-               "antimalarials* · *facilities at bed capacity that are also "
-               "running out of medicine* · *which PHCs are already out of ORS*")
+SUGGESTIONS = [
+    "Which PHCs are already out of ORS?",
+    "What should the district prioritise this week?",
+    "Why is Yadadri Bhuvanagiri failing?",
+    "How does the forecast work?",
+]
 
-    q = st.text_input("Question",
-                      placeholder="e.g. which CHCs are running out of antibiotics?",
-                      label_visibility="collapsed")
+if "chat" not in st.session_state:
+    st.session_state.chat = []
+if "pending_q" not in st.session_state:
+    st.session_state.pending_q = None
+
+with st.expander("💬 **Ask AarogyaGrid** — natural language search across all facilities",
+                 expanded=False):
+
+    st.caption("Gemini translates your question into a query over the facility "
+               "data, runs it, and summarises the result. Try a suggestion or "
+               "type your own.")
+
+    sc = st.columns(len(SUGGESTIONS))
+    for i, s in enumerate(SUGGESTIONS):
+        if sc[i].button(s, key=f"sg_{i}", use_container_width=True):
+            st.session_state.pending_q = s
+            st.rerun()
+
+    with st.form("nlq", clear_on_submit=True):
+        fc1, fc2 = st.columns([6, 1])
+        typed = fc1.text_input("Question", label_visibility="collapsed",
+                               placeholder="e.g. which CHCs are running out of antibiotics?")
+        submitted = fc2.form_submit_button("Ask", use_container_width=True)
+
+    q = st.session_state.pending_q or (typed if submitted and typed else None)
+    st.session_state.pending_q = None
 
     if q:
-        with st.spinner("Interpreting…"):
+        with st.spinner("Thinking…"):
+            try:
+                mode = route(q)
+            except Exception:
+                mode = "FILTER"
+
+        entry = {"q": q, "mode": mode, "expr": None, "err": None,
+                 "n": 0, "brief": "", "answer": ""}
+
+        if mode == "ADVISE":
+            ctx = situation(alerts, resil, transfers, status, scen)
+            entry["answer"] = advise(q, ctx)
+
+        elif mode == "EXPLAIN":
+            entry["answer"] = explain(q)
+
+        elif mode == "OTHER":
+            entry["err"] = ("I answer questions about this facility network — "
+                            "stock levels, which facilities are at risk, what "
+                            "the district should prioritise, or how the system "
+                            "works. Try one of the suggestions above.")
+        else:
             try:
                 res, expr, err = nl_run(q)
             except Exception as e:
                 res, expr, err = None, None, str(e)
-
-        if err:
-            st.error(err)
-            if expr:
-                st.code(expr, language="text")
-        elif res is None or len(res) == 0:
-            st.info("No facilities match that query.")
-            if expr:
-                st.code(expr, language="text")
-        else:
-            with st.spinner("Summarising…"):
+            entry["expr"], entry["err"] = expr, err
+            if res is not None and len(res):
+                entry["n"] = len(res)
                 try:
-                    brief = summarise(q, res)
+                    entry["brief"] = summarise(q, res)
                 except Exception:
-                    brief = ""
+                    pass
+                entry["rows"] = res[["facility_name", "facility_type", "district",
+                                     "sku_name", "current_stock", "days_to_stockout",
+                                     "tier", "occupancy_pct", "staff_present_pct"]]
 
-            if brief:
-                st.info(brief)
-            st.caption(f"{len(res)} matching facility-medicine pairs")
-            st.dataframe(
-                res[["facility_name", "facility_type", "district", "sku_name",
-                     "current_stock", "days_to_stockout", "tier",
-                     "occupancy_pct", "staff_present_pct"]],
-                use_container_width=True, hide_index=True, height=300)
-            with st.expander("Query Gemini generated"):
-                st.code(expr, language="python")
-                st.caption("Validated against a blocklist before execution — "
-                           "only read operations on the in-memory dataframe "
-                           "are permitted.")
+        st.session_state.chat.insert(0, entry)
+
+    if st.session_state.chat:
+        if st.button("Clear history", key="clr"):
+            st.session_state.chat = []
+            st.rerun()
+
+        for i, e in enumerate(st.session_state.chat):
+            with st.container(border=True):
+                st.markdown(f"**❯ {e['q']}**")
+                st.caption(f"mode: {e.get('mode','FILTER')}")
+                if e.get("answer"):
+                    st.success(e["answer"])
+                if e["err"]:
+                    st.warning(e["err"])
+                elif e.get("mode") in ("ADVISE", "EXPLAIN"):
+                    pass
+                elif e["n"] == 0:
+                    st.info("No facilities match that query.")
+                else:
+                    if e["brief"]:
+                        st.info(e["brief"])
+                    st.caption(f"{e['n']} matching facility-medicine pairs")
+                    st.dataframe(e["rows"], use_container_width=True,
+                                 hide_index=True, height=240)
+                if e["expr"]:
+                    with st.expander("Query Gemini generated", expanded=False):
+                        st.code(e["expr"], language="python")
+                        st.caption("Validated against a blocklist before "
+                                   "execution — only read operations on the "
+                                   "in-memory dataframe are permitted.")
 
 st.divider()
 
@@ -134,6 +192,25 @@ tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9 = st.tabs(
 
 # ---------------------------------------------------------------- map
 with tab1:
+    risk_by_district = (alerts[alerts.tier.isin(["STOCKOUT", "CRITICAL"])]
+                        .groupby("district").size().sort_values(ascending=False))
+    top_d = risk_by_district.index[0]
+
+    st.info(
+        f"**How to read this map.** Each pin is a facility, sized by the "
+        f"population it serves and coloured by its worst medicine status. "
+        f"**{int(risk_by_district.iloc[0])} of {int(risk_by_district.sum())} at-risk "
+        f"facility-medicine pairs are concentrated in {top_d}** — the red "
+        f"cluster. The green facilities to the south and east are fully "
+        f"stocked, which is precisely what makes redistribution possible: "
+        f"surplus exists {int(transfers.road_km.mean())} km away, on average, "
+        f"from where it is needed.\n\n"
+        f"Every colour here is a **forecast, not a reading**. A facility is red "
+        f"because its projected burn rate empties the shelf before the next "
+        f"resupply arrives — not because it is empty today. "
+        f"{int((alerts.tier == 'STOCKOUT').sum())} pairs are already at zero; "
+        f"the other {int((alerts.tier == 'CRITICAL').sum())} are still preventable.")
+
     worst = (alerts.assign(rank=alerts.tier.map(
                 {"STOCKOUT": 0, "CRITICAL": 1, "WARNING": 2, "WATCH": 3, "OK": 4}))
              .sort_values("rank").groupby("facility_id", as_index=False).first())

@@ -54,6 +54,10 @@ Domain notes:
 
 Return ONLY the query expression. No markdown, no backticks, no explanation,
 no assignment. Use str.contains for partial name matches.
+If the question is NOT a request to filter facility or medicine data — for
+example a question about the interface, a greeting, a request to explain
+something, or anything unrelated — return exactly this and nothing else:
+OUT_OF_SCOPE
 
 Examples:
 Q: which facilities are already out of ORS?
@@ -112,6 +116,10 @@ def to_query(question):
     expr = expr.strip().strip("`").replace("```", "").strip()
     if expr.lower().startswith("a:"):
         expr = expr[2:].strip()
+    if expr.strip().upper() == "OUT_OF_SCOPE":
+        return None, ("That question isn't a data filter. Try asking about "
+                      "facilities, medicines or stock — for example "
+                      "*which CHCs are running out of antibiotics?*")    
 
     if BLOCKED.search(expr):
         return None, "Query rejected: contains a disallowed operation"
@@ -131,10 +139,15 @@ def run(question, df=None):
         return None, expr, err
 
     try:
-        return df.query(expr, engine="python"), expr, None
+        res = df.query(expr, engine="python")
     except Exception as e:
         return None, expr, f"Could not execute: {type(e).__name__}: {e}"
 
+    if len(res) > len(df) * 0.9:
+        return None, expr, ("That matched almost every record — the question "
+                            "was probably too broad. Try narrowing it to a "
+                            "district, medicine or alert status.")
+    return res, expr, None
 
 # ---------------------------------------------------------------- summary
 
@@ -181,3 +194,138 @@ if __name__ == "__main__":
             print(res[["facility_name", "sku_name", "days_to_stockout",
                        "tier"]].head(4).to_string(index=False))
             print(f"\n  BRIEF: {summarise(q, res)}")
+# ==================================================================== router
+
+ROUTER = """Classify the user's question into exactly one word:
+
+FILTER  - asks for specific facilities, medicines, or stock records that
+          match conditions. "which CHCs are out of antibiotics",
+          "understaffed facilities in Yadadri"
+ADVISE  - asks what should be done, why a facility or district is
+          struggling, what the priority is, how to fix or reduce a
+          problem, or for a recommendation or diagnosis grounded in
+          the current situation. "what should the district do",
+          "why is Yadadri failing", "where should we act first",
+          "how do we stop stockouts"
+EXPLAIN - asks how the SYSTEM works — the model, the maths, the data
+          sources, or what a term means. Not about any specific facility
+          or district. "how does the forecast work", "what is a
+          resilience index", "where does the data come from"
+OTHER   - anything else: greetings, unrelated topics, chit-chat
+
+Return only the single word."""
+
+
+ADVISE_SYSTEM = """You are briefing an Indian district health officer on their
+own supply situation. You have their live figures. Write the briefing.
+
+Write three short paragraphs — no headings, no bullet points, no labels.
+Keep the whole briefing under 150 words:
+
+First, the situation — how many facilities are affected, what is already at
+zero, what is about to be.
+
+Second, the pattern — which district or facilities carry the burden, which
+medicines dominate, and whether staffing or bed pressure compounds it.
+
+Third, the action — the specific transfers or emergency indents to authorise
+this week, naming facilities and medicines from the data, and the one
+structural change that would stop it recurring.
+
+
+
+Use only the figures provided. Name real facilities and medicines from the
+data. Never restate these instructions, never list your constraints, never
+use asterisks or numbered points. Write as one continuous briefing an
+officer would read aloud in a meeting."""
+
+
+EXPLAIN_FACTS = """AarogyaGrid facts — answer only from these:
+
+FORECASTING: Ridge regression per medicine, using lagged IDSP disease
+surveillance (previous week, two weeks back, 4-week mean) plus consumption
+history and calendar seasonality. Features are point-in-time correct — no
+same-week disease count enters the model, because IDSP publishes weekly in
+arrears. Compared against three baselines: naive persistence, 7-day moving
+average, seasonal naive. Ridge wins on 6 of 8 medicines; the other two fall
+back to naive because sparse outbreak-driven demand defeats regression.
+
+ALERTS: days_to_stockout = current stock / forecast daily burn. Reorder point
+= (lead time x daily demand) + safety stock, where safety stock =
+1.65 x demand std dev x sqrt(lead time), a 95% service level. Five tiers:
+STOCKOUT, CRITICAL, WARNING, WATCH, OK.
+
+REDISTRIBUTION: OR-Tools min-cost flow. Minimises unmet demand, then transport
+distance, then expiry waste. Donors must retain their own reorder point.
+Distance capped at 75 km. Every order requires human approval.
+
+FEDERATION: each node trains locally; only model coefficients and feature
+statistics are exchanged. No inventory or patient record crosses a boundary.
+Data-poor nodes gain most (25% error reduction on a 3-month node); data-rich
+nodes are essentially unaffected.
+
+RESILIENCE INDEX: medicine availability 40%, stock-out urgency 20%, staff
+availability 20%, bed headroom 20%. A prototype policy index, not validated.
+
+DATA: facility locations are real Telangana mandal headquarters. Disease
+incidence and treatment rates come from NFHS-5 Telangana. Seasonality is
+calibrated against 218 IDSP outbreak reports via the EpiClim dataset.
+Stock levels, footfall, beds and staffing are synthesised from those real
+anchors — no public API exposes live PHC inventory in India.
+
+Answer in 2-3 sentences. If the question is outside these facts, say the
+system does not cover it."""
+
+
+def route(question):
+    r = ask(f"Question: {question}", system=ROUTER, temperature=0.0)
+    r = (r or "OTHER").strip().upper()
+    return r if r in {"FILTER", "ADVISE", "EXPLAIN", "OTHER"} else "OTHER"
+
+
+def situation(alerts, resil, transfers, status, scen=None):
+    """Compact snapshot of the live situation, for grounding advice."""
+    worst = resil.head(6)[["facility_name", "district", "score", "band",
+                           "primary_risk", "days_to_next_stockout",
+                           "supply_pct", "staffing_pct"]]
+    urgent = (alerts[alerts.tier.isin(["CRITICAL", "STOCKOUT"])]
+              .nsmallest(10, "days_to_stockout")
+              [["facility_name", "sku_name", "current_stock",
+                "daily_burn", "days_to_stockout", "tier"]])
+    moves = transfers.head(6)[["from_facility", "to_facility", "sku_name",
+                               "quantity", "road_km", "courses_covered"]]
+
+    txt = f"""CURRENT SITUATION — {alerts.facility_id.nunique()} facilities, Telangana
+
+Alert counts: {alerts.tier.value_counts().to_dict()}
+Already at zero: {int((alerts.tier == 'STOCKOUT').sum())} facility-medicine pairs
+Preventable: {int((alerts.tier == 'CRITICAL').sum())}, median warning \
+{alerts[alerts.tier == 'CRITICAL'].days_to_stockout.median():.1f} days
+High-risk facilities: {int((resil.band == 'HIGH RISK').sum())} of {len(resil)}
+Mean staff present: {status.staff_present_pct.mean():.0f}% of sanctioned
+Mean bed occupancy: {status.occupancy_pct.mean():.0f}%
+
+MOST VULNERABLE FACILITIES
+{worst.to_string(index=False)}
+
+MOST URGENT MEDICINES
+{urgent.to_string(index=False)}
+
+AVAILABLE TRANSFERS ({len(transfers)} total, \
+{int(transfers.courses_covered.sum()):,} courses protected)
+{moves.to_string(index=False)}"""
+
+    if scen:
+        s = pd.DataFrame(scen)
+        txt += f"\n\nEMERGENCY SCENARIOS (modelled)\n{s[['scenario','surge_at_risk','newly_at_risk','median_days_lost']].to_string(index=False)}"
+    return txt
+
+
+def advise(question, ctx):
+    return ask(f"{ctx}\n\nOfficer's question: {question}",
+               system=ADVISE_SYSTEM, temperature=0.4) or ""
+
+
+def explain(question):
+    return ask(f"Question: {question}", system=EXPLAIN_FACTS,
+               temperature=0.2) or ""

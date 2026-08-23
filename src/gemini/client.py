@@ -35,7 +35,7 @@ def ask(prompt, system=None, temperature=0.3):
 
     body = {
         "contents": [{"parts": [{"text": prompt}]}],
-        "generationConfig": {"temperature": temperature, "maxOutputTokens": 2000},
+        "generationConfig": {"temperature": temperature, "maxOutputTokens": 4000},
     }
     if system:
         body["systemInstruction"] = {"parts": [{"text": system}]}

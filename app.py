@@ -523,6 +523,19 @@ with tab5:
                                   use_container_width=True):
                         st.session_state[f"st_{key}"] = result
                         st.rerun()
+    st.divider()
+
+    st.info(T(
+        "**Order-of-magnitude scale.** The prototype protects 3,462 treatment "
+        "courses across 37 facilities in one redistribution cycle — about 94 "
+        "per facility. India operates roughly 30,000 PHCs and 5,700 CHCs. If a "
+        "comparable share of facilities carried surplus within transfer range, "
+        "a single national cycle would move medicine covering on the order of "
+        "3 million treatment courses.\n\n"
+        "This is arithmetic, not a projection. Our demonstration district was "
+        "constructed to be under acute supply stress, so its per-facility rate "
+        "is higher than a national average would be. It is offered to indicate "
+        "scale, not to forecast benefit.", LANG))
 
 # ---------------------------------------------------------------- AI briefs
 with tab6:

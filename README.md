@@ -1,12 +1,10 @@
 <div align="center">
 
-# 🏥 AarogyaGrid
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:0A0E1A,50:1A2336,100:5B8DEF&height=190&section=header&text=AarogyaGrid&fontSize=62&fontColor=ffffff&animation=fadeIn&fontAlignY=36&desc=Predictive%20stock-out%20prevention%20for%20India's%20primary%20health%20network&descAlignY=57&descSize=15" width="100%"/>
 
-### Predictive stock-out prevention for India's primary health network
+<img src="https://readme-typing-svg.demolab.com?font=IBM+Plex+Mono&weight=500&size=19&duration=3600&pause=900&color=5B8DEF&center=true&vCenter=true&width=760&lines=DVDMS+records+what+happened.;AarogyaGrid+predicts+what's+about+to+happen.;And+tells+districts+what+to+do+about+it.;Without+any+state+sharing+its+raw+data." alt="tagline"/>
 
-*DVDMS records what happened. AarogyaGrid predicts what's about to happen —<br>and tells districts what to do about it, without any state sharing its raw data.*
-
-<br>
+<br><br>
 
 [![Live Demo](https://img.shields.io/badge/▶_Live_Demo-Open_App-FF4B4B?style=for-the-badge)](https://aarogyagrid-bwai.streamlit.app/)
 [![Python](https://img.shields.io/badge/Python-3.14-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
@@ -14,6 +12,7 @@
 
 ![Status](https://img.shields.io/badge/status-working_prototype-success)
 ![Coverage](https://img.shields.io/badge/coverage-Telangana%3A_3_districts%2C_37_facilities-informational)
+![Languages](https://img.shields.io/badge/languages-English_·_తెలుగు_·_हिन्दी-9333EA)
 ![Track](https://img.shields.io/badge/track-Smart_Health_%26_Supply_Chain-orange)
 
 <br>
@@ -111,12 +110,12 @@ The problem statement asks for visibility into medicines, **patient footfall**, 
                 │
        ┌────────┴────────┐
        ▼                 ▼
-┌─────────────┐   ┌─────────────┐
-│REDISTRIBUTE │   │   GEMINI    │  operational briefings
-│ OR-Tools    │   │  BRIEFINGS  │  English + Telugu
-│ min-cost    │   │  NL QUERY   │  question → data query
-│ human       │   └─────────────┘
-│ approval    │
+┌─────────────┐   ┌──────────────────┐
+│REDISTRIBUTE │   │      GEMINI      │
+│ OR-Tools    │   │  ask · advise ·  │
+│ min-cost    │   │  explain · brief │
+│ human       │   │  EN · తెలుగు · हिन्दी │
+│ approval    │   └──────────────────┘
 └──────┬──────┘
        │
        ▼
@@ -125,6 +124,59 @@ The problem statement asks for visibility into medicines, **patient footfall**, 
 │  across nodes, no raw data           │
 └──────────────────────────────────────┘
 ```
+
+---
+
+<div align="center">
+
+## 💬 Ask AarogyaGrid
+
+*The officer types a question. The system routes it three ways.*
+
+</div>
+
+| Mode | Question | What happens |
+|---|---|---|
+| **FILTER** | *"which CHCs are running out of antibiotics?"* | Gemini writes a pandas expression, it's validated against a blocklist, executed, and summarised |
+| **ADVISE** | *"what should the district prioritise this week?"* | The live situation — alerts, resilience scores, staffing, available transfers — is passed to Gemini, which returns a briefing naming real facilities and quantities |
+| **EXPLAIN** | *"how does the forecast work?"* | Answers from a fixed fact sheet about the model, never from general knowledge |
+
+Routing uses deterministic keyword checks first, falling back to a Gemini classifier. Off-topic questions are declined rather than answered from training data.
+
+**ADVISE output — unedited:**
+
+> *Across Telangana, 37 facilities face critical alerts, with 10 high-risk centres and 21 facility-medicine pairs already completely at zero stock.*
+>
+> *The strain is concentrated in Yadadri Bhuvanagiri district, impacting CHC Bhongir, CHC Choutuppal and PHC Alair. ORS Sachets, Zinc Sulphate 20mg and Paracetamol 500mg dominate the stockouts, compounded by staff shortages averaging 83% of sanctioned capacity and dropping to 28.6% at PHC Yadagirigutta.*
+>
+> *Authorise immediate transfers this week from CHC Narketpally to send 881 ORS sachets to PHC Ramannapet, 200 to PHC Addagudur, and move 667 from PHC Nakrekal to CHC Bhongir. To stop recurrence, mandate automated redistribution triggers that act during the 5.8-day lead window before stocks hit zero.*
+
+Every facility, medicine and quantity in that briefing is read from the live data. Nothing is invented.
+
+**FILTER output — unedited, including the user's typos:**
+
+> **Asked:** *"Which CHS Are Running For Antibodies"*
+>
+> ```python
+> facility_type == "CHC" and (sku_name.str.contains("Ciprofloxacin")
+>   or sku_name.str.contains("Amoxicillin")) and tier in ["CRITICAL","STOCKOUT"]
+> ```
+>
+> "CHS" for CHC, "antibodies" for antibiotics, no verb — and it still resolved the intent, mapped the drug class to two specific SKUs, and applied the right status filter.
+
+---
+
+<div align="center">
+
+## 🗣️ Multilingual by design
+
+</div>
+
+Operational content is delivered in **English, తెలుగు or हिन्दी** — briefings, recommendations, alert explanations, emergency conclusions and transfer instructions. Nine panels switch language at once.
+
+**What is never translated:** medicine names and facility names. A pharmacist matching a translated drug name against an English box is a real failure mode.
+
+**What stays in English:** navigation, data tables and the methodology section. District health reporting and stock registers in India are maintained in English, and the interface states this rather than leaving it looking unfinished.
 
 ---
 
@@ -144,8 +196,8 @@ Every model is compared against **naive persistence**, a **7-day moving average*
 | **ORS Sachet** | 11.53% | 12.30% | 🟢 **+6.3%** | Ridge |
 | **Amoxicillin 500mg** | 12.11% | 12.75% | 🟢 **+5.0%** | Ridge |
 | **Paracetamol 500mg** | 13.94% | 14.51% | 🟢 **+3.9%** | Ridge |
-| Artemether-Lumefantrine | 16.96% | 16.04% | −5.7% | Naive (fallback) |
-| Ciprofloxacin 500mg | 17.38% | 14.80% | −17.4% | Naive (fallback) |
+| Artemether-Lumefantrine | 16.96% | 16.04% | 🔴 −5.7% | Naive (fallback) |
+| Ciprofloxacin 500mg | 17.38% | 14.80% | 🔴 −17.4% | Naive (fallback) |
 
 </div>
 
@@ -221,7 +273,15 @@ MOVE 881 × ORS Sachet (WHO formula)
 
 Constraints enforced: the donor must retain its own reorder point, transferred batches must outlast the receiver's consumption window, distance is capped at 75 km, and receiver storage capacity is respected.
 
-**Every order requires human authorisation.** The optimiser proposes; a district officer approves, modifies or rejects. Stock transfers carry clinical and audit consequences a solver cannot weigh.
+**Every order requires human authorisation.** Approve, Modify or Reject sits on each recommendation. The optimiser proposes; a district officer decides. Stock transfers carry clinical and audit consequences a solver cannot weigh.
+
+<br>
+
+> ### 📏 Order-of-magnitude scale
+>
+> The prototype protects 3,462 treatment courses across 37 facilities in one redistribution cycle — about 94 per facility. India operates roughly 30,000 PHCs and 5,700 CHCs. If a comparable share of facilities carried surplus within transfer range, a single national cycle would move medicine covering **on the order of 3 million treatment courses**.
+>
+> This is arithmetic, not a projection. Our demonstration district was constructed to be under acute supply stress, so its per-facility rate is higher than a national average would be. It indicates scale; it does not forecast benefit.
 
 <br>
 
@@ -250,51 +310,32 @@ Constraints enforced: the donor must retain its own reorder point, transferred b
 
 ## 🤖 Google AI integration
 
-Gemini performs three distinct jobs, one of them on the **input** side of the system.
+Gemini performs four distinct jobs, two of them on the **input** side of the system.
 
 <table>
 <tr>
 <td width="50%" valign="top">
 
 **Natural-language querying**
-An officer types a question in plain English; Gemini translates it into a query over the facility data, which is validated against a blocklist and executed, then summarised as an actionable brief. This is Google AI operating *on* the data, not describing it.
+A question becomes a validated pandas expression, executed against live data and summarised. Google AI operating *on* the data, not describing it.
 
-**Evidence-grounded operational briefing**
-Each alert becomes a three-sentence brief converting model outputs — stock level, burn rate, reorder point, transfer options — into an instruction. Gemini is not establishing causality; it is turning numbers into something actionable.
+**Situational advice**
+The live alert, resilience, staffing and transfer state is passed as context; Gemini returns a briefing naming real facilities and quantities.
 
 </td>
 <td width="50%" valign="top">
 
+**Evidence-grounded briefings**
+Each alert becomes three sentences converting model outputs into an instruction. Gemini is not establishing causality; it turns numbers into something actionable.
+
 **Multilingual delivery**
-English for the district health officer, Telugu for the PHC pharmacist. Medicine names stay in English so they match the packaging.
-
-**Model fallback chain**
-Requests fall through a preference list of Gemini models, so a retired or overloaded model degrades gracefully instead of failing.
-
-**Cached generation**
-Briefings are generated ahead of time and cached to disk. The live demo never depends on an API call succeeding.
+Nine operational panels in English, Telugu or Hindi. Medicine and facility names are never translated.
 
 </td>
 </tr>
 </table>
 
-**Natural-language query — unedited, including the user's typos:**
-
-> **Asked:** *"Which CHS Are Running For Antibodies"*
->
-> **Gemini generated:**
-> ```python
-> facility_type == "CHC" and (sku_name.str.contains("Ciprofloxacin")
->   or sku_name.str.contains("Amoxicillin")) and tier in ["CRITICAL","STOCKOUT"]
-> ```
->
-> Correct rows returned. "CHS" for CHC, "antibodies" for antibiotics, no verb — and it still resolved the intent, mapped the drug class to two specific SKUs, and applied the right status filter.
-
-**Operational briefing — unedited:**
-
-> *PHC Alair will run out of Iron Folic Acid in 13.5 days. Current stock has fallen to 1,656 units against the reorder point of 1,935 units due to a daily burn rate of 122.77 units. Request an immediate stock transfer from PHC Addagudur, located 34.9 km away.*
-
-Three sentences: what happens, why, and the specific action — with a named source facility and a real distance.
+**Reliability:** requests fall through a preference list of Gemini models, so a retired or overloaded model degrades gracefully. Alert briefings are generated ahead of time and cached to disk, so the demo never depends on a live API call succeeding.
 
 ---
 
@@ -334,13 +375,11 @@ We state this plainly rather than obscure it.
 
 <br>
 
-> ### On the ORS–diarrhoea correlation
+> ### On the two correlations
 >
-> The dashboard shows ORS consumption tracking district diarrhoeal cases at **r = 0.960**. **This correlation is expected, not discovered** — consumption was *derived* from case counts at 6 sachets each, so the two series are related by construction.
+> **ORS vs diarrhoea, r = 0.960 — expected, not discovered.** Consumption was *derived* from case counts at 6 sachets each, so the two series are related by construction. It validates that the generator applies clinical norms consistently across 18 months and three districts. It is **not** evidence that the data matches real PHC records, and we do not claim it is.
 >
-> It validates that the generator applies clinical norms consistently across 18 months and three districts. It is **not** evidence that the data matches real PHC records, and we do not claim it is.
->
-> The **footfall → demand** correlation is a different measurement: **median r = 0.741 across facilities, 28 of 37 above 0.5**. It tests whether patient volume predicts medicine movement, computed weekly and only on days when stock was actually available. A facility that has run out issues nothing regardless of how many patients arrive — including those days would mask the relationship rather than measure it.
+> **Footfall vs demand, median r = 0.741 across facilities, 28 of 37 above 0.5 — a different measurement.** It tests whether patient volume predicts medicine movement, computed weekly and only on days when stock was actually available. A facility that has run out issues nothing regardless of how many patients arrive; including those days would mask the relationship rather than measure it.
 
 <br>
 
@@ -369,6 +408,22 @@ INDIA
 </div>
 
 The architecture is **state → district → facility**, so additional states connect as additional nodes without structural change. **The demonstration data is not national**, and the interface says so.
+
+---
+
+## 🖥️ The console — nine views
+
+| View | What it answers |
+|---|---|
+| **Alert Map** | Where is the crisis concentrated? Every colour is a forecast, not a reading |
+| **Patient Footfall** | Does patient volume actually move medicine? (r = 0.741) |
+| **Emergency Mode** | What happens if dengue doubles, or a flood hits? |
+| **Preventable Stock-outs** | Which facilities still have time, and how much? |
+| **Redistribution Plan** | Which transfers to authorise — with Approve / Modify / Reject |
+| **AI Briefings** | The alert as an instruction, English beside Telugu |
+| **Federated Learning** | Does sharing weights help, and who does it help most? |
+| **PHC Resilience Index** | Where should the district intervene first? |
+| **Why It Works** | What is real, what is synthesised, and what we do not claim |
 
 ---
 
@@ -431,7 +486,7 @@ aarogyagrid/
 │   └── gemini/
 │       ├── client.py                 model fallback chain
 │       ├── briefs.py                 operational briefings, EN + TE
-│       └── nl_query.py               natural-language → data query
+│       └── nl_query.py               routing, querying, advice, translation
 └── data/processed/                   parquet, cached briefings, metrics
 ```
 
@@ -480,6 +535,7 @@ Stated here rather than left for a reviewer to find.
 - **Two SKUs fall back to naive forecasting** (antimalarials and cholera antibiotics) because Ridge does not beat the baseline on sparse, event-driven demand.
 - **Seasonality is calibrated on outbreak reports, not routine incidence.** The curve's shape is empirical; its amplitude is a modelling choice.
 - **The Resilience Index is a prototype policy instrument.** Its weights are a starting proposal and would need calibration against outcome data before operational use.
+- **The pipeline is run as ten scripts**, not an automated orchestration.
 
 ---
 
@@ -497,9 +553,11 @@ Stated here rather than left for a reviewer to find.
 
 <br>
 
-**[▶ Open the live demo](https://aarogyagrid-bwai.streamlit.app/)**
+### [▶ Open the live demo](https://aarogyagrid-bwai.streamlit.app/)
 
 <br>
+
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:5B8DEF,50:1A2336,100:0A0E1A&height=110&section=footer" width="100%"/>
 
 <sub>Build with AI: Code for Communities · Google Cloud × GDG India · 2026</sub>
 

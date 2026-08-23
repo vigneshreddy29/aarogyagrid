@@ -13,7 +13,7 @@
 [![Gemini](https://img.shields.io/badge/Google_Gemini-Powered-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev)
 
 ![Status](https://img.shields.io/badge/status-working_prototype-success)
-![Coverage](https://img.shields.io/badge/prototype_coverage-Telangana%3A_3_districts-informational)
+![Coverage](https://img.shields.io/badge/coverage-Telangana%3A_3_districts%2C_37_facilities-informational)
 ![Track](https://img.shields.io/badge/track-Smart_Health_%26_Supply_Chain-orange)
 
 <br>
@@ -69,7 +69,25 @@ The consequence isn't only clinical. Roughly **48% of Indian healthcare spending
 
 ---
 
-## How it works
+## The demand chain
+
+The problem statement asks for visibility into medicines, **patient footfall**, and resource utilisation. Footfall is the operational link most systems skip — a case only consumes medicine once the patient walks in.
+
+```
+   DISEASE INCIDENCE          IDSP surveillance, weekly
+          ↓
+   FACILITY-SEEKING           NFHS-5: 71.1% of cases reach a provider
+          ↓
+   PATIENT FOOTFALL           OPD · IPD · emergency · referrals
+          ↓                   measured r = 0.881 against units issued
+   MEDICINE DEMAND            clinical treatment courses
+          ↓
+   STOCK DEPLETION            reorder point · safety stock · days remaining
+```
+
+<br>
+
+## System architecture
 
 ```
      DVDMS / e-Aushadhi export
@@ -89,7 +107,7 @@ The consequence isn't only clinical. Roughly **48% of Indian healthcare spending
      ┌──────────────────────┐
      │   EARLY WARNING      │  days-to-stockout · reorder point
      │                      │  safety stock · 5 alert tiers
-     └──────────┬───────────┘
+     └──────────┬───────────┘  + emergency surge scenarios
                 │
        ┌────────┴────────┐
        ▼                 ▼
@@ -97,40 +115,16 @@ The consequence isn't only clinical. Roughly **48% of Indian healthcare spending
 │REDISTRIBUTE │   │   GEMINI    │  operational briefings
 │ OR-Tools    │   │  BRIEFINGS  │  English + Telugu
 │ min-cost    │   │  NL QUERY   │  question → data query
-│ flow        │   └─────────────┘
+│ human       │   └─────────────┘
+│ approval    │
 └──────┬──────┘
        │
        ▼
 ┌──────────────────────────────────────┐
 │  FEDERATION — coefficients only      │
-│  across state nodes, no raw data     │
+│  across nodes, no raw data           │
 └──────────────────────────────────────┘
 ```
-
-<br>
-
-<table>
-<tr>
-<td width="33%" valign="top">
-
-### 🔮 Predict
-Ridge regression per medicine using **lagged disease surveillance**. Beats the best of three baselines on 6 of 8 medicines; the other 2 fall back to naive persistence by design.
-
-</td>
-<td width="33%" valign="top">
-
-### ⚠️ Warn
-Real inventory theory — reorder points, safety stock at 95% service level. Separates *already failed* from *still preventable*.
-
-</td>
-<td width="33%" valign="top">
-
-### 🚚 Act
-OR-Tools min-cost flow generates **executable transfer orders**: move 933 units from here to there, 61 km, 67 courses protected.
-
-</td>
-</tr>
-</table>
 
 ---
 
@@ -144,22 +138,24 @@ Every model is compared against **naive persistence**, a **7-day moving average*
 
 | Medicine | Ridge MAPE | Best baseline | Improvement | Model used |
 |---|:---:|:---:|:---:|:---:|
-| **Iron Folic Acid** | 12.83% | 13.94% | 🟢 **+7.9%** | Ridge |
-| **Paracetamol 500mg** | 12.91% | 13.84% | 🟢 **+6.7%** | Ridge |
-| **Amoxicillin 500mg** | 12.60% | 13.47% | 🟢 **+6.5%** | Ridge |
-| **Metformin 500mg** | 12.48% | 13.36% | 🟢 **+6.5%** | Ridge |
-| **Zinc Sulphate 20mg** | 12.84% | 13.61% | 🟢 **+5.6%** | Ridge |
-| **ORS Sachet** | 11.69% | 12.36% | 🟢 **+5.4%** | Ridge |
-| Artemether-Lumefantrine | 12.74% | 12.73% | −0.1% | Naive (fallback) |
-| Ciprofloxacin 500mg | 18.45% | 15.91% | −16.0% | Naive (fallback) |
+| **Metformin 500mg** | 12.51% | 13.54% | 🟢 **+7.6%** | Ridge |
+| **Paracetamol 500mg** | 11.36% | 12.28% | 🟢 **+7.5%** | Ridge |
+| **Amoxicillin 500mg** | 13.01% | 14.00% | 🟢 **+7.1%** | Ridge |
+| **Iron Folic Acid** | 11.76% | 12.64% | 🟢 **+7.0%** | Ridge |
+| **ORS Sachet** | 11.82% | 12.54% | 🟢 **+5.8%** | Ridge |
+| **Zinc Sulphate 20mg** | 15.48% | 16.14% | 🟢 **+4.1%** | Ridge |
+| **Artemether-Lumefantrine** | 13.22% | 13.39% | 🟢 **+1.3%** | Ridge |
+| Ciprofloxacin 500mg | 18.91% | 16.39% | −15.4% | Naive (fallback) |
 
 </div>
 
-> **Two medicines are reported as failures, and the system falls back to naive persistence for them.**
+> **One medicine is reported as a failure, and the system falls back to naive persistence for it.**
 >
 > This is a deliberate design choice, not an oversight. Ridge helps where demand follows a trackable seasonal signal. It hurts where events are sparse and stochastic — cholera cases are rare enough that the surveillance feature is mostly noise, and the model overfits it. Per-SKU model selection is applied automatically on held-out data: if Ridge does not beat naive, naive is used in production.
 >
 > Full metrics — MAE, RMSE, WAPE and MAPE across all four models and all eight SKUs — are written to [`data/processed/forecast_metrics.csv`](data/processed/forecast_metrics.csv).
+>
+> ⚠️ **Measured on synthetic inventory data**, so real-world performance on live PHC records would differ. What the comparison establishes is that lagged surveillance features carry predictive signal beyond consumption history alone.
 
 <br>
 
@@ -169,7 +165,7 @@ IDSP surveillance is published **weekly, in arrears**. A forecast made on a Tues
 
 All disease features are therefore lagged by at least one full week: `dis_w1` (previous reported week), `dis_w2`, and a four-week trailing mean. The weekly series is shifted **before** joining to daily records, so no same-week value can leak into the feature matrix.
 
-This costs accuracy — an earlier version using same-week counts scored better — and that is the point. The reported figures are what the system would achieve in production.
+This costs accuracy — an earlier version using same-week counts scored substantially better — and that is the point. The reported figures are what the system would achieve in production.
 
 <br>
 
@@ -177,7 +173,7 @@ This costs accuracy — an earlier version using same-week counts scored better 
 
 <div align="center">
 
-| 24 | 52 | 5.6 days | 18 |
+| 22 | 50 | 6.0 days | 18 |
 |:---:|:---:|:---:|:---:|
 | already at zero<br>*(the cost of no warning)* | preventable<br>stock-outs caught | median warning<br>lead time | alerts with<br>7–14 days notice |
 
@@ -185,11 +181,30 @@ This costs accuracy — an earlier version using same-week counts scored better 
 
 <br>
 
+### 🚨 Emergency mode
+
+A steady-state forecast cannot answer *"what if dengue doubles next week?"* Each scenario applies disease-specific demand multipliers and re-runs the same reorder arithmetic — nothing is retrained, which is exactly what would happen in production.
+
+<div align="center">
+
+| Scenario | At risk (normal → surge) | Newly critical | Warning time lost | Fail inside onset window |
+|---|:---:|:---:|:---:|:---:|
+| **Flood displacement** | 72 → 103 | **30** | **23.8 days** | 26 within 3 days |
+| **Dengue outbreak** | 72 → 91 | 18 | 18.6 days | 35 within 7 days |
+| **Malaria surge** | 72 → 88 | 15 | 19.0 days | 25 within 5 days |
+| **Heatwave** | 72 → 87 | 14 | 14.8 days | 8 within 2 days |
+
+</div>
+
+> A flood erases **nearly 24 days of warning** across affected medicines. Twenty-six facility-medicine pairs deplete inside the 3-day onset window — faster than a district indent can be raised and delivered. Pre-positioning has to happen before the surge is visible in case counts.
+
+<br>
+
 ### 🚚 Redistribution a district officer can execute
 
 <div align="center">
 
-| 52 | 40 | 55,227 | 3,377 |
+| 92 | 83 | 89,690 | 6,927 |
 |:---:|:---:|:---:|:---:|
 | transfer orders | cross-district | units moved | treatment courses<br>protected |
 
@@ -198,13 +213,15 @@ This costs accuracy — an earlier version using same-week counts scored better 
 **Sample output — not a chart, an instruction:**
 
 ```
-MOVE 933 × Zinc Sulphate 20mg
-  FROM  PHC Nalgonda 2 (Nalgonda) — 3,782 surplus units
-  TO    CHC Yadadri Bhuvanagiri 1 — already at zero
-  61.0 km · ~104 min · covers 67 treatment courses
+MOVE 1,610 × ORS Sachet (WHO formula)
+  FROM  CHC Narketpally (Nalgonda) — 7,794 surplus units
+  TO    PHC Valigonda (Yadadri Bhuvanagiri) — already at zero
+  34.4 km · ~58 min · covers 268 treatment courses
 ```
 
-Constraints enforced: the donor must retain its own reorder point, transferred batches must outlast the receiver's consumption window, distance is capped, and receiver storage capacity is respected.
+Constraints enforced: the donor must retain its own reorder point, transferred batches must outlast the receiver's consumption window, distance is capped at 75 km, and receiver storage capacity is respected.
+
+**Every order requires human authorisation.** The optimiser proposes; a district officer approves, modifies or rejects. Stock transfers carry clinical and audit consequences a solver cannot weigh.
 
 <br>
 
@@ -214,9 +231,9 @@ Constraints enforced: the donor must retain its own reorder point, transferred b
 
 | Node | Training rows | Alone | Federated | Gain |
 |---|:---:|:---:|:---:|:---:|
-| Data-rich *(18 months)* | 6,780 | 9.50% | 9.48% | +0.2% |
-| Moderate *(9 months)* | 2,532 | 10.69% | 10.05% | 🟢 **+6.0%** |
-| Data-poor *(3 months)* | 310 | 23.78% | 19.04% | 🟢 **+19.9%** |
+| Data-rich *(18 months)* | 6,780 | 9.11% | 9.08% | +0.3% |
+| Moderate *(9 months)* | 2,532 | 12.96% | 12.45% | 🟢 **+3.9%** |
+| Data-poor *(3 months)* | 310 | 19.45% | 17.45% | 🟢 **+10.3%** |
 
 </div>
 
@@ -225,7 +242,7 @@ Constraints enforced: the donor must retain its own reorder point, transferred b
 > **What crosses a node boundary:** 13 model coefficients, 13 feature statistics.
 > **What never leaves:** inventory records, patient counts, facility data.
 >
-> The gain scales inversely with local data volume, and nobody is made worse off — that monotonic relationship is the theoretical prediction, and it holds.
+> The gain scales inversely with local data volume, and nobody is made worse off — that monotonic relationship is the theoretical prediction for federated averaging, and it holds.
 >
 > **How the nodes are constructed:** they are simulated by partitioning our districts and giving each a deliberately different amount of training history. They carry state names in the interface to make the scenario legible, but the underlying facilities are all in Telangana. What is demonstrated is the *federation mechanism*, which is identical regardless of how nodes are partitioned.
 
@@ -240,7 +257,7 @@ Gemini performs three distinct jobs, one of them on the **input** side of the sy
 <td width="50%" valign="top">
 
 **Natural-language querying**
-An officer types a question in plain English; Gemini translates it into a query over the facility data, which is validated against a blocklist and executed. This is Google AI operating *on* the data, not describing it.
+An officer types a question in plain English; Gemini translates it into a query over the facility data, which is validated against a blocklist and executed, then summarised as an actionable brief. This is Google AI operating *on* the data, not describing it.
 
 **Evidence-grounded operational briefing**
 Each alert becomes a three-sentence brief converting model outputs — stock level, burn rate, reorder point, transfer options — into an instruction. Gemini is not establishing causality; it is turning numbers into something actionable.
@@ -271,13 +288,13 @@ Briefings are generated ahead of time and cached to disk. The live demo never de
 >   or sku_name.str.contains("Amoxicillin")) and tier in ["CRITICAL","STOCKOUT"]
 > ```
 >
-> Four correct rows returned. "CHS" for CHC, "antibodies" for antibiotics, no verb — and it still resolved the intent, mapped the drug class to two specific SKUs, and applied the right status filter.
+> Correct rows returned. "CHS" for CHC, "antibodies" for antibiotics, no verb — and it still resolved the intent, mapped the drug class to two specific SKUs, and applied the right status filter.
 
 **Operational briefing — unedited:**
 
-> *PHC Yadadri Bhuvanagiri 7 will run out of Artemether-Lumefantrine in 14 days. Current stock has fallen below the reorder point of 209 units while the daily burn rate of 13.5 units remains high due to the peak monsoon season increasing malaria transmission. Please initiate an immediate stock transfer of 206 units from the surplus at PHC Nalgonda located 69.5 km away.*
+> *PHC Alair will run out of Iron Folic Acid in 13.5 days. Current stock has fallen to 1,656 units against the reorder point of 1,935 units due to a daily burn rate of 122.77 units. Request an immediate stock transfer from PHC Addagudur, located 34.9 km away.*
 
-The middle clause is the point. Gemini situated the burn rate in seasonal context — connecting an antimalarial to monsoon transmission — without that link being supplied in the prompt. It is interpretation grounded in the numbers passed to it, not a filled-in template.
+Three sentences: what happens, why, and the specific action — with a named source facility and a real distance.
 
 ---
 
@@ -294,16 +311,19 @@ We state this plainly rather than obscure it.
 
 | Data | Source | Status |
 |---|---|:---:|
-| District structure, PHC/CHC counts | Real Telangana districts · IPHS norms (1 PHC ≈ 30,000 people) | ✅ **Real** |
+| **Facility locations** | Real Telangana mandal headquarters — Indian PHCs are sited at mandal HQ under IPHS. Six are confirmed PHC sites in NHM's published Hospital Development Society list | ✅ **Real** |
+| District structure, PHC/CHC counts | Real districts · IPHS norms (1 PHC ≈ 30,000 people, 1 CHC ≈ 120,000) | ✅ **Real** |
 | Medicine list | National List of Essential Medicines (NLEM) | ✅ **Real** |
 | **Diarrhoeal incidence** | **NFHS-5 (2019–21), Telangana** — 5.46% two-week prevalence in under-5s | ✅ **Real, downloaded** |
 | **Treatment rates** | **NFHS-5, Telangana** — 61.8% receive ORS, 39.3% receive zinc, 71.1% reach a provider | ✅ **Real, downloaded** |
 | Seasonal shape | Modelled on published IDSP seasonal patterns | ⚠️ **Modelled** |
 | Stock levels, receipts, issues | Derived from the above via documented clinical norms | 🔶 **Synthesised** |
+| Patient footfall | Derived from incidence, catchment and IPHS service-load norms | 🔶 **Synthesised** |
 | Bed occupancy, staff attendance | Generated against IPHS staffing and bed norms | 🔶 **Synthesised** |
 | Road distances | Haversine × 1.35 rural road factor | 🔶 **Derived** |
 
 Source file: [`data/raw/NFHS_5_Factsheets_Data.xls`](data/raw/) — downloaded from data.gov.in.
+Facility placement: [`src/mandals.py`](src/mandals.py).
 
 <br>
 
@@ -312,6 +332,8 @@ Source file: [`data/raw/NFHS_5_Factsheets_Data.xls`](data/raw/) — downloaded f
 > The dashboard shows ORS consumption tracking district diarrhoeal cases at **r = 0.960**. **This correlation is expected, not discovered** — consumption was *derived* from case counts at 6 sachets each, so the two series are related by construction.
 >
 > It validates that the generator applies clinical norms consistently across 18 months and three districts. It is **not** evidence that the data matches real PHC records, and we do not claim it is.
+>
+> The **footfall → demand** correlation (r = 0.881 median) is a different measurement: it tests whether patient volume predicts medicine movement, computed weekly and only on days when stock was actually available. A facility that has run out issues nothing regardless of how many patients arrive — including those days would mask the relationship rather than measure it.
 
 <br>
 
@@ -319,7 +341,7 @@ Source file: [`data/raw/NFHS_5_Factsheets_Data.xls`](data/raw/) — downloaded f
 
 **Why that is sufficient for a prototype.** The system's value is in the pipeline, not the numbers: forecasting from surveillance, converting forecasts to reorder decisions, solving redistribution under constraints, and federating models without pooling data. Every one of those operates identically on real DVDMS records.
 
-The generator is open source in [`src/generator/`](src/generator/). The ingestion schema ([`docs/openapi.yaml`](docs/openapi.yaml)) specifies the interface a state's DVDMS export connects to — published as an open specification so any vendor can implement against it. **The endpoints are specified but not yet implemented;** the schema itself is the Digital Public Good artifact, with field names mirroring DVDMS stock register columns so adoption requires mapping rather than restructuring.
+The ingestion schema ([`docs/openapi.yaml`](docs/openapi.yaml)) specifies the interface a state's DVDMS export connects to — published as an open specification so any vendor can implement against it. **The endpoints are specified but not yet implemented;** the schema itself is the Digital Public Good artifact, with field names mirroring DVDMS stock register columns so adoption requires mapping rather than restructuring.
 
 ---
 
@@ -360,13 +382,16 @@ echo "GEMINI_API_KEY=your_key_here" > .env
 Build the pipeline:
 
 ```bash
-python src/generator/build_data.py        # 1. data foundation
+python src/generator/build_data.py        # 1. facilities, disease, stock ledger
 python src/forecast/train.py              # 2. train forecasters
 python src/alerts/engine.py               # 3. compute alerts
 python src/optimizer/redistribute.py      # 4. solve redistribution
 python src/federated/fedavg.py            # 5. run federation
-python src/generator/facility_status.py   # 6. bed + staff capacity
-python src/gemini/briefs.py               # 7. generate briefings
+python src/generator/facility_status.py   # 6. beds and staff
+python src/generator/footfall.py          # 7. patient footfall
+python src/alerts/resilience.py           # 8. resilience index
+python src/alerts/emergency.py            # 9. surge scenarios
+python src/gemini/briefs.py               # 10. operational briefings
 
 python -m streamlit run app.py
 ```
@@ -378,16 +403,22 @@ python -m streamlit run app.py
 
 ```
 aarogyagrid/
-├── app.py                            Streamlit dashboard, 7 views
+├── app.py                            Streamlit console, 9 views
+├── style.py                          visual layer
 ├── docs/openapi.yaml                 open ingestion schema
 ├── data/raw/                         NFHS-5 source file
 ├── src/
 │   ├── config.py                     districts, SKUs, NFHS-calibrated incidence
+│   ├── mandals.py                    real Telangana mandal locations
 │   ├── generator/
 │   │   ├── build_data.py             derives inventory from epidemiology
-│   │   └── facility_status.py        beds and staff against IPHS norms
+│   │   ├── facility_status.py        beds and staff against IPHS norms
+│   │   └── footfall.py               OPD, IPD, emergency, referrals
 │   ├── forecast/train.py             Ridge + 3 baselines, point-in-time correct
-│   ├── alerts/engine.py              reorder points, 5 alert tiers
+│   ├── alerts/
+│   │   ├── engine.py                 reorder points, 5 alert tiers
+│   │   ├── resilience.py             composite operational index
+│   │   └── emergency.py              surge scenario simulation
 │   ├── optimizer/redistribute.py     OR-Tools min-cost flow
 │   ├── federated/fedavg.py           personalised FedAvg across nodes
 │   └── gemini/
@@ -435,11 +466,12 @@ Brazil and South Africa operate comparable primary health networks with the same
 Stated here rather than left for a reviewer to find.
 
 - **Coverage is one state.** Three Telangana districts, 37 facilities, 8 SKUs.
-- **Inventory data is synthesised.** Derived from real epidemiology, but not measured.
+- **Inventory, footfall, bed and staff data are synthesised.** Derived from real epidemiology and IPHS norms, but not measured.
+- **Facility coordinates are mandal headquarters**, accurate to 1–2 km, not surveyed facility entrances.
 - **Ingestion endpoints are specified, not implemented.** The schema is published; the server is not built.
 - **Federation nodes are simulated** by partitioning districts with unequal training history, not by connecting real state systems.
-- **Two SKUs fall back to naive forecasting** because Ridge does not beat the baseline on sparse, event-driven demand.
-- **Bed and staff data are generated** against IPHS norms; no public API exposes them live.
+- **One SKU falls back to naive forecasting** because Ridge does not beat the baseline on sparse, event-driven demand.
+- **The Resilience Index is a prototype policy instrument.** Its weights are a starting proposal and would need calibration against outcome data before operational use.
 
 ---
 
